@@ -1,7 +1,7 @@
 import re
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, SelectField
-from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError, Regexp
+from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError, Regexp, Optional
 from app.models import User
 
 class RegistrationForm(FlaskForm):
@@ -99,6 +99,10 @@ class PostForm(FlaskForm):
         ('Career', 'Career & Engineering Life'),
         ('General', 'General Tech')
     ], default='Python', validators=[DataRequired()])
+    tags = StringField('Tags (Comma-separated, optional)', validators=[
+        Optional(),
+        Length(max=200, message="Tags list cannot exceed 200 characters.")
+    ])
     featured_image = StringField('Cover Image URL (Optional)', validators=[
         Length(max=255, message="Image URL is too long.")
     ])

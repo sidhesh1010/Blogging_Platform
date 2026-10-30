@@ -52,7 +52,7 @@
             </div>
 
             <!-- Category & Image URL Row -->
-            <div class="row g-3 mb-4">
+            <div class="row g-3 mb-3">
               <div class="col-md-5">
                 {{ form.category.label(class="form-label fw-semibold text-dark small") }}
                 <div class="input-group">
@@ -77,6 +77,25 @@
                 <div class="form-text text-muted" style="font-size: 0.75rem;">
                   Optional. Leave empty for a curated category cover image.
                 </div>
+              </div>
+            </div>
+
+            <!-- Tags Field (Week 6) -->
+            <div class="mb-4">
+              {{ form.tags.label(class="form-label fw-semibold text-dark small") }}
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 text-secondary"><i class="bi bi-hash"></i></span>
+                {% if form.tags.errors %}
+                  {{ form.tags(class="form-control form-control-custom border-start-0 is-invalid", placeholder="python, webdev, flask, architecture", id="postTagsInput") }}
+                  <div class="invalid-feedback">
+                    {% for error in form.tags.errors %}{{ error }}{% endfor %}
+                  </div>
+                {% else %}
+                  {{ form.tags(class="form-control form-control-custom border-start-0", placeholder="python, webdev, flask, architecture", id="postTagsInput") }}
+                {% endif %}
+              </div>
+              <div class="form-text text-muted" style="font-size: 0.75rem;">
+                Comma-separated tags to help readers discover your story via search &amp; tag filters.
               </div>
             </div>
 

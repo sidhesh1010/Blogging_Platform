@@ -771,15 +771,108 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 
 .search-input-wrapper input {
   padding-left: 2.5rem;
+  padding-right: 2.2rem;
   border-radius: var(--radius-full);
 }
 
-.search-input-wrapper i {
+.search-input-wrapper i.bi-search {
   position: absolute;
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
   color: var(--bs-secondary);
   pointer-events: none;
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--bs-secondary);
+  text-decoration: none;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  transition: var(--transition-smooth);
+}
+
+.search-clear-btn:hover {
+  color: #ef4444;
+}
+
+/* Week 6: Filter Tags & Badges */
+.filter-active-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: var(--bs-primary-subtle);
+  color: var(--bs-primary);
+  border: 1px solid rgba(79, 70, 229, 0.2);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+
+.filter-active-badge:hover {
+  background-color: rgba(79, 70, 229, 0.2);
+  color: var(--bs-primary-dark);
+}
+
+.filter-active-badge .badge-remove {
+  font-weight: bold;
+  opacity: 0.7;
+}
+
+.filter-active-badge:hover .badge-remove {
+  opacity: 1;
+}
+
+/* Sort Select Form Control */
+.sort-select-custom {
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  padding: 0.4rem 2rem 0.4rem 0.9rem;
+  border-color: var(--bs-border-color);
+  background-color: var(--card-bg);
+  color: var(--text-heading);
+}
+
+/* Server-Side Pagination */
+.pagination {
+  margin-bottom: 0;
+}
+
+.pagination .page-link {
+  color: var(--text-body);
+  background-color: var(--card-bg);
+  border: 1px solid var(--bs-border-color);
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: var(--transition-smooth);
+  margin: 0 0.15rem;
+}
+
+.pagination .page-link:hover {
+  background-color: var(--bs-primary-subtle);
+  color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.pagination .page-item.active .page-link {
+  background: var(--primary-gradient);
+  color: #ffffff;
+  border-color: var(--bs-primary);
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35);
+}
+
+.pagination .page-item.disabled .page-link {
+  background-color: transparent;
+  color: var(--bs-secondary);
+  opacity: 0.5;
+  border-color: var(--bs-border-color);
 }
 

@@ -257,6 +257,11 @@ document.addEventListener('DOMContentLoaded', function () {
   if (categoryPills.length > 0) {
     categoryPills.forEach(function (pill) {
       pill.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href && href !== '#') {
+          // Allow server navigation with preserved query state
+          return;
+        }
         e.preventDefault();
         categoryPills.forEach(p => p.classList.remove('active'));
         this.classList.add('active');

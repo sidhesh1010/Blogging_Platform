@@ -95,6 +95,18 @@
     <div class="mx-auto" id="articleReaderContainer" style="max-width: 820px;">
       <div class="article-body-content bg-white p-4 p-md-5 rounded-4 shadow-sm border mb-5">
         {{ post.content|safe|replace('\n', '<br>') }}
+
+        <!-- Article Tags / Topics (Week 6) -->
+        {% if post.tag_list %}
+        <div class="pt-3 mt-4 border-top d-flex flex-wrap align-items-center gap-2">
+          <span class="text-secondary small fw-semibold me-1"><i class="bi bi-tags me-1"></i> Topics:</span>
+          {% for t in post.tag_list %}
+            <a href="{{ url_for('main.index', tag=t) }}" class="badge bg-light text-primary border text-decoration-none px-3 py-2 rounded-pill small">
+              #{{ t }}
+            </a>
+          {% endfor %}
+        </div>
+        {% endif %}
       </div>
 
       <!-- Article Sticky / Interactive Interaction Bar -->

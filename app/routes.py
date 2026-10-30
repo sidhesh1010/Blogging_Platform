@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from app import db
-from app.models import ContactMessage, BlogPost
+from app.models import ContactMessage, BlogPost, User, Comment
 
 # Define the main blueprint for core application routes
 main = Blueprint('main', __name__)
@@ -72,25 +72,120 @@ SAMPLE_POSTS = [
 @main.route('/')
 def index():
     """
-    Home page route.
-    Renders the hero section, featured blog posts, and platform statistics.
-    Pulls dynamic posts from SQLite database (Week 3) or falls back to samples.
+    Home page route with full-text search, category and tag filtering,
+    sorting, and server-side pagination (Week 6 Milestone).
     """
-    db_posts = BlogPost.query.order_by(BlogPost.created_at.desc()).all()
-    if db_posts:
-        featured_post = db_posts[0]
-        recent_posts = db_posts[1:]
-    else:
-        featured_post = SAMPLE_POSTS[0]
-        recent_posts = SAMPLE_POSTS[1:]
+    q = request.args.get('q', '').strip()
+    category = request.args.get('category', 'All').strip()
+    tag = request.args.get('tag', '').strip()
+    sort = request.args.get('sort', 'newest').strip()
+    page = request.args.get('page', 1, type=int)
+    per_page = 6
 
+    has_real_posts = (BlogPost.query.count() > 0)
     categories = ['All', 'Python', 'Architecture', 'UI/UX Design', 'Security', 'AI & ML', 'Career', 'General']
+
+    if has_real_posts:
+        query = BlogPost.query
+
+        # Multi-field search across title, content, tags, category, and author username
+        if q:
+            term = f"%{q}%"
+            query = query.outerjoin(User, BlogPost.author_id == User.id).filter(
+                db.or_(
+                    BlogPost.title.ilike(term),
+                    BlogPost.content.ilike(term),
+                    BlogPost.tags.ilike(term),
+                    BlogPost.category.ilike(term),
+                    User.username.ilike(term)
+                )
+            )
+
+        # Category filter
+        if category and category.lower() != 'all':
+            query = query.filter(BlogPost.category.ilike(category))
+
+        # Tag filter
+        if tag:
+            clean_tag = tag.lstrip('#').strip()
+            query = query.filter(BlogPost.tags.ilike(f"%{clean_tag}%"))
+
+        # Sorting
+        if sort == 'oldest':
+            query = query.order_by(BlogPost.created_at.asc())
+        elif sort == 'popular':
+            query = query.outerjoin(Comment).group_by(BlogPost.id).order_by(
+                db.func.count(Comment.id).desc(),
+                BlogPost.created_at.desc()
+            )
+        else:  # newest default
+            query = query.order_by(BlogPost.created_at.desc())
+
+        pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+        posts = pagination.items
+        total_results = pagination.total
+
+        is_filtered = bool(q or (category and category.lower() != 'all') or tag or (sort and sort != 'newest') or page > 1)
+        if not is_filtered and posts:
+            featured_post = posts[0]
+            display_posts = posts[1:]
+        else:
+            featured_post = None
+            display_posts = posts
+
+    else:
+        # Fallback to SAMPLE_POSTS with in-memory filtering and mock pagination
+        filtered_samples = list(SAMPLE_POSTS)
+        if q:
+            q_lower = q.lower()
+            filtered_samples = [
+                p for p in filtered_samples
+                if q_lower in p['title'].lower() or q_lower in p['summary'].lower() or q_lower in p['category'].lower() or q_lower in p['author'].lower()
+            ]
+        if category and category.lower() != 'all':
+            filtered_samples = [p for p in filtered_samples if p['category'].lower() == category.lower()]
+
+        total_results = len(filtered_samples)
+        start_idx = (page - 1) * per_page
+        end_idx = start_idx + per_page
+        display_posts = filtered_samples[start_idx:end_idx]
+
+        class MockPagination:
+            def __init__(self, page, per_page, total, items):
+                self.page = page
+                self.per_page = per_page
+                self.total = total
+                self.items = items
+                self.pages = max(1, (total + per_page - 1) // per_page)
+                self.has_prev = page > 1
+                self.has_next = page < self.pages
+                self.prev_num = page - 1
+                self.next_num = page + 1
+
+            def iter_pages(self, left_edge=1, right_edge=1, left_current=2, right_current=2):
+                return list(range(1, self.pages + 1))
+
+        pagination = MockPagination(page, per_page, total_results, display_posts)
+        is_filtered = bool(q or (category and category.lower() != 'all') or tag or page > 1)
+        if not is_filtered and display_posts:
+            featured_post = display_posts[0]
+            display_posts = display_posts[1:]
+        else:
+            featured_post = None
+
     return render_template(
         'index.html',
         featured_post=featured_post,
-        recent_posts=recent_posts,
+        recent_posts=display_posts,
+        pagination=pagination,
         categories=categories,
-        has_real_posts=bool(db_posts)
+        has_real_posts=has_real_posts,
+        q=q,
+        selected_category=category,
+        tag=tag,
+        sort=sort,
+        total_results=total_results,
+        is_filtered=is_filtered
     )
 
 @main.route('/about')

@@ -80,22 +80,41 @@
 <!-- ================= 2. Category Filter & Featured Post ================= -->
 <section class="py-5" id="featured-feed">
   <div class="container">
-    <!-- Category Pill & Real-time Search Filter Bar (Week 4) -->
+    <!-- Category Pill & Real-time Search Filter Bar (Week 4 & 6) -->
     <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
       <div>
         <h2 class="h3 fw-bold mb-1">Explore by Category</h2>
-        <p class="text-secondary small mb-0">Real-time search and filter across topics, authors, and insights</p>
+        <p class="text-secondary small mb-0">Discover stories by topics, authors, tags, and insights</p>
       </div>
       <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-3">
-        <!-- Live Real-Time Search Input (Week 4) -->
-        <div class="search-input-wrapper">
-          <i class="bi bi-search"></i>
-          <input type="text" class="form-control form-control-custom" id="articleSearchInput" placeholder="Search stories, topics, authors..." autocomplete="off">
-        </div>
+        <!-- Server-side & Live Search Input Form (Week 6) -->
+        <form action="{{ url_for('main.index') }}" method="GET" class="d-flex align-items-center gap-2 m-0" id="searchFilterForm">
+          <div class="search-input-wrapper">
+            <i class="bi bi-search"></i>
+            <input type="text" name="q" value="{{ q or '' }}" class="form-control form-control-custom" id="articleSearchInput" placeholder="Search stories, topics, authors..." autocomplete="off">
+            {% if q %}
+              <a href="{{ url_for('main.index', category=selected_category if selected_category != 'All' else None, tag=tag if tag else None, sort=sort if sort != 'newest' else None) }}" class="search-clear-btn" title="Clear query">
+                <i class="bi bi-x-circle-fill"></i>
+              </a>
+            {% endif %}
+          </div>
+          {% if selected_category and selected_category != 'All' %}
+            <input type="hidden" name="category" value="{{ selected_category }}">
+          {% endif %}
+          {% if tag %}
+            <input type="hidden" name="tag" value="{{ tag }}">
+          {% endif %}
+          {% if sort and sort != 'newest' %}
+            <input type="hidden" name="sort" value="{{ sort }}">
+          {% endif %}
+          <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3 d-none d-sm-inline-flex align-items-center">
+            Search
+          </button>
+        </form>
 
         <div class="category-filter-bar">
           {% for cat in categories %}
-            <a href="#" class="category-pill {% if loop.first %}active{% endif %}" data-category="{{ cat }}">
+            <a href="{{ url_for('main.index', category=cat, q=q if q else None, tag=tag if tag else None, sort=sort if sort != 'newest' else None) }}" class="category-pill {% if (selected_category == cat) or (not selected_category and loop.first) %}active{% endif %}" data-category="{{ cat }}">
               {{ cat }}
             </a>
           {% endfor %}
@@ -103,16 +122,78 @@
       </div>
     </div>
 
-    <!-- Empty Search Results Alert (Week 4) -->
-    <div class="card border rounded-4 text-center py-5 mb-5 bg-light d-none" id="noSearchResults">
-      <div class="mb-2 text-secondary">
-        <i class="bi bi-search fs-1 text-primary-subtle"></i>
+    <!-- Active Filter Badges & Sort Controls (Week 6) -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pt-2 border-top">
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        {% if is_filtered %}
+          <span class="text-secondary small fw-semibold me-1">Active Filters:</span>
+          {% if q %}
+            <a href="{{ url_for('main.index', category=selected_category if selected_category != 'All' else None, tag=tag if tag else None, sort=sort if sort != 'newest' else None) }}" class="filter-active-badge" title="Remove search term">
+              <i class="bi bi-search"></i> "{{ q }}" <span class="badge-remove">&times;</span>
+            </a>
+          {% endif %}
+          {% if selected_category and selected_category != 'All' %}
+            <a href="{{ url_for('main.index', q=q if q else None, tag=tag if tag else None, sort=sort if sort != 'newest' else None) }}" class="filter-active-badge" title="Remove category filter">
+              <i class="bi bi-folder2"></i> {{ selected_category }} <span class="badge-remove">&times;</span>
+            </a>
+          {% endif %}
+          {% if tag %}
+            <a href="{{ url_for('main.index', category=selected_category if selected_category != 'All' else None, q=q if q else None, sort=sort if sort != 'newest' else None) }}" class="filter-active-badge" title="Remove tag filter">
+              <i class="bi bi-tag"></i> #{{ tag }} <span class="badge-remove">&times;</span>
+            </a>
+          {% endif %}
+          <a href="{{ url_for('main.index') }}" class="btn btn-link btn-sm text-secondary p-0 text-decoration-none ms-2 small">
+            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset All
+          </a>
+        {% else %}
+          <span class="text-secondary small">
+            <i class="bi bi-journal-text me-1 text-primary"></i> Showing curated technical publications
+          </span>
+        {% endif %}
       </div>
-      <h5 class="fw-bold text-dark mb-1">No Matching Stories Found</h5>
-      <p class="text-secondary small mb-0">Try searching with another keyword or selecting "All" categories.</p>
+
+      <!-- Sorting Selector -->
+      <div class="d-flex align-items-center gap-2 ms-auto">
+        <label for="sortSelector" class="text-secondary small text-nowrap d-none d-sm-inline">Sort by:</label>
+        <select id="sortSelector" class="form-select form-select-sm sort-select-custom" onchange="location = this.value;">
+          <option value="{{ url_for('main.index', sort='newest', q=q if q else None, category=selected_category if selected_category != 'All' else None, tag=tag if tag else None) }}" {% if sort == 'newest' %}selected{% endif %}>
+            Newest First
+          </option>
+          <option value="{{ url_for('main.index', sort='oldest', q=q if q else None, category=selected_category if selected_category != 'All' else None, tag=tag if tag else None) }}" {% if sort == 'oldest' %}selected{% endif %}>
+            Oldest First
+          </option>
+          <option value="{{ url_for('main.index', sort='popular', q=q if q else None, category=selected_category if selected_category != 'All' else None, tag=tag if tag else None) }}" {% if sort == 'popular' %}selected{% endif %}>
+            Most Discussed
+          </option>
+        </select>
+      </div>
     </div>
 
-    <!-- Featured Post Hero Card -->
+    <!-- Empty Search Results Alert (Week 4 & 6) -->
+    <div class="card border rounded-4 text-center py-5 mb-5 bg-light {% if total_results > 0 %}d-none{% endif %}" id="noSearchResults">
+      <div class="mb-3">
+        <div class="d-inline-flex p-3 rounded-circle bg-primary-subtle text-primary">
+          <i class="bi bi-search fs-2"></i>
+        </div>
+      </div>
+      <h4 class="fw-bold text-dark mb-1">No Matching Stories Found</h4>
+      <p class="text-secondary small mb-3 max-w-md mx-auto">
+        {% if q %}
+          We couldn't find any articles matching "<strong>{{ q }}</strong>"{% if selected_category and selected_category != 'All' %} in {{ selected_category }}{% endif %}.
+        {% elif tag %}
+          No articles tagged with "<strong>#{{ tag }}</strong>".
+        {% else %}
+          No articles found for the selected filter or try searching with another keyword.
+        {% endif %}
+      </p>
+      <div>
+        <a href="{{ url_for('main.index') }}" class="btn btn-primary btn-sm rounded-pill px-4">
+          <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Filters &amp; View All Stories
+        </a>
+      </div>
+    </div>
+
+    <!-- Featured Post Hero Card (Only shown on Page 1 unfiltered) -->
     {% if featured_post %}
     <div class="card card-featured mb-5 blog-card-item" data-category="{{ featured_post.category }}">
       <div class="row g-0">
@@ -170,18 +251,33 @@
     {% endif %}
 
     <!-- Recent Posts Grid -->
+    {% if recent_posts %}
     <div class="d-flex align-items-center justify-content-between mb-4">
       <div>
-        <h2 class="h3 fw-bold mb-1">Recent Articles</h2>
-        <p class="text-secondary small mb-0">Stay updated with the latest community publications</p>
+        <h2 class="h3 fw-bold mb-1">
+          {% if is_filtered %}
+            Search &amp; Filter Results
+          {% else %}
+            Recent Articles
+          {% endif %}
+        </h2>
+        <p class="text-secondary small mb-0">
+          {% if is_filtered %}
+            Showing matching publications across the platform
+          {% else %}
+            Stay updated with the latest community publications
+          {% endif %}
+        </p>
       </div>
-      <span class="text-muted small">Showing {{ recent_posts|length + 1 }} articles</span>
+      <span class="text-muted small">
+        Showing {{ recent_posts|length }} of {{ total_results }} stories
+      </span>
     </div>
 
     <div class="row g-4" id="postsGrid">
       {% for post in recent_posts %}
       <div class="col-lg-4 col-md-6 blog-card-item" data-category="{{ post.category }}">
-        <div class="card card-blog">
+        <div class="card card-blog h-100">
           <div class="card-blog-img">
             {% if not post.is_sample %}
               <a href="{{ url_for('posts.post_detail', post_id=post.id) }}">
@@ -210,6 +306,16 @@
                   </a>
                 {% endif %}
               </h3>
+
+              <!-- Optional Tags Preview (Week 6) -->
+              {% if post.tag_list is defined and post.tag_list %}
+                <div class="mb-2 d-flex flex-wrap gap-1">
+                  {% for t in post.tag_list[:3] %}
+                    <a href="{{ url_for('main.index', tag=t) }}" class="badge bg-light text-primary border text-decoration-none px-2 py-1" style="font-size: 0.72rem;">#{{ t }}</a>
+                  {% endfor %}
+                </div>
+              {% endif %}
+
               <p class="text-secondary small mb-3">
                 {{ post.summary }}
               </p>
@@ -238,6 +344,44 @@
       </div>
       {% endfor %}
     </div>
+
+    <!-- Server-Side Pagination (Week 6) -->
+    {% if pagination and pagination.pages > 1 %}
+    <nav aria-label="Stories pagination" class="mt-5">
+      <ul class="pagination justify-content-center flex-wrap align-items-center gap-1">
+        <!-- Previous Page -->
+        <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+          <a class="page-link rounded-pill px-3" href="{{ url_for('main.index', page=pagination.prev_num, q=q if q else None, category=selected_category if selected_category != 'All' else None, tag=tag if tag else None, sort=sort if sort != 'newest' else None) if pagination.has_prev else '#' }}" tabindex="-1" aria-disabled="{{ not pagination.has_prev }}">
+            <i class="bi bi-chevron-left me-1"></i> Prev
+          </a>
+        </li>
+
+        <!-- Page Numbers -->
+        {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+          {% if p %}
+            <li class="page-item {% if p == pagination.page %}active{% endif %}">
+              <a class="page-link rounded-circle px-0 text-center" style="width: 38px; height: 38px; line-height: 24px;" href="{{ url_for('main.index', page=p, q=q if q else None, category=selected_category if selected_category != 'All' else None, tag=tag if tag else None, sort=sort if sort != 'newest' else None) }}">
+                {{ p }}
+              </a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link border-0 bg-transparent text-muted">…</span></li>
+          {% endif %}
+        {% endfor %}
+
+        <!-- Next Page -->
+        <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+          <a class="page-link rounded-pill px-3" href="{{ url_for('main.index', page=pagination.next_num, q=q if q else None, category=selected_category if selected_category != 'All' else None, tag=tag if tag else None, sort=sort if sort != 'newest' else None) if pagination.has_next else '#' }}">
+            Next <i class="bi bi-chevron-right ms-1"></i>
+          </a>
+        </li>
+      </ul>
+      <div class="text-center text-muted small mt-2">
+        Page {{ pagination.page }} of {{ pagination.pages }} &bull; {{ total_results }} total stories
+      </div>
+    </nav>
+    {% endif %}
+    {% endif %}
   </div>
 </section>
 

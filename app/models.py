@@ -70,6 +70,7 @@ class BlogPost(db.Model):
     title = db.Column(db.String(150), nullable=False, index=True)
     content = db.Column(db.Text, nullable=False)
     category = db.Column(db.String(50), nullable=False, default='General', index=True)
+    tags = db.Column(db.String(255), nullable=True, default='')
     featured_image = db.Column(db.String(255), nullable=True)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
@@ -77,6 +78,13 @@ class BlogPost(db.Model):
 
     # Relationship linking BlogPost to reader comments (Week 5)
     comments = db.relationship('Comment', backref='post', lazy='dynamic', cascade='all, delete-orphan', order_by='Comment.created_at.desc()')
+
+    @property
+    def tag_list(self):
+        """Return a clean list of tags without leading '#' or extra whitespace."""
+        if not self.tags:
+            return []
+        return [t.strip().lstrip('#') for t in self.tags.split(',') if t.strip()]
 
     def snippet(self, length=160):
         """Extract a clean text snippet without HTML tags for card previews."""

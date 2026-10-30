@@ -19,6 +19,7 @@ def create_post():
             title=form.title.data.strip(),
             content=form.content.data.strip(),
             category=form.category.data,
+            tags=form.tags.data.strip() if form.tags.data else '',
             featured_image=form.featured_image.data.strip() if form.featured_image.data else None,
             author=current_user
         )
@@ -65,6 +66,7 @@ def edit_post(post_id):
     if form.validate_on_submit():
         post.title = form.title.data.strip()
         post.category = form.category.data
+        post.tags = form.tags.data.strip() if form.tags.data else ''
         post.featured_image = form.featured_image.data.strip() if form.featured_image.data else None
         post.content = form.content.data.strip()
 
@@ -74,6 +76,7 @@ def edit_post(post_id):
     elif request.method == 'GET':
         form.title.data = post.title
         form.category.data = post.category
+        form.tags.data = post.tags or ''
         form.featured_image.data = post.featured_image or ''
         form.content.data = post.content
         form.submit.label.text = 'Update Story'

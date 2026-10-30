@@ -4,8 +4,8 @@
 [![Flask](https://img.shields.io/badge/Flask-3.0.3-green.svg)](https://flask.palletsprojects.com/)
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.1-red.svg)](https://www.sqlalchemy.org/)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-purple.svg)](https://getbootstrap.com/)
-[![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen.svg)]()
-[![Internship](https://img.shields.io/badge/Internship-Week%205%20Completed-orange.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-Passing%20(41)-brightgreen.svg)]()
+[![Internship](https://img.shields.io/badge/Internship-Week%206%20Completed-orange.svg)]()
 
 > A modern, responsive, and secure full-stack blogging platform developed as part of an **8-Week Technical Internship Program**.
 
@@ -34,7 +34,7 @@
 | **Database Migrations** | Flask-Migrate 4.0.7, Alembic |
 | **Authentication & Forms**| Flask-Login, Flask-WTF, WTForms, email-validator |
 | **Frontend** | HTML5, Jinja2 Templates, Bootstrap 5.3, Bootstrap Icons, Custom CSS3 |
-| **Testing** | Pytest 8.2 (32 automated tests passing) |
+| **Testing** | Pytest 8.2 (41 automated tests passing) |
 | **Version Control** | Git, GitHub (`https://github.com/sidhesh1010/Blogging_Platform`) |
 
 ---
@@ -50,7 +50,7 @@ Blogging_Platform/
 │   ├── posts.py             # Blog Post & Comment CRUD Blueprint (create, detail, edit, delete, comment)
 │   ├── models.py            # SQLAlchemy models (User, BlogPost, Comment, ContactMessage)
 │   ├── forms.py             # WTForms (RegistrationForm, LoginForm, PostForm, CommentForm, UpdateProfileForm)
-│   ├── routes.py            # Core routes and custom error handlers (404, 403, 500)
+│   ├── routes.py            # Core routes, search/filtering/pagination & error handlers (404, 403, 500)
 │   ├── static/
 │   │   ├── css/
 │   │   │   └── style.css    # Design system, dark theme tokens, reading progress & animations
@@ -58,15 +58,15 @@ Blogging_Platform/
 │   │       └── main.js      # Dark mode toggle, progress bar, reader controls & live search
 │   └── templates/
 │       ├── base.html        # Jinja2 master layout with theme toggle, progress bar & back-to-top
-│       ├── index.html       # Hero section, real-time search, category pills & dynamic cards
+│       ├── index.html       # Hero section, server & live search, category pills & dynamic cards
 │       ├── about.html       # Project mission, technology matrix & 8-week roadmap
 │       ├── contact.html     # Interactive contact form backed by SQLite database
 │       ├── login.html       # Secure login portal with remember-me
 │       ├── register.html    # Author registration with validation
 │       ├── profile.html     # Author profile management, published stories & comment stats
-│       ├── create_post.html # Rich story creation interface with live word count & preview
-│       ├── edit_post.html   # Author story editor with delete modal confirmation
-│       ├── post_detail.html # Medium-style reading layout with discussion thread & reader tools
+│       ├── create_post.html # Rich story creation interface with live word count, tags & preview
+│       ├── edit_post.html   # Author story editor with tags & delete modal confirmation
+│       ├── post_detail.html # Medium-style reading layout with discussion thread, tags & reader tools
 │       └── errors/
 │           ├── 404.html     # Custom responsive Page Not Found view
 │           ├── 403.html     # Custom responsive Forbidden Access view
@@ -79,7 +79,8 @@ Blogging_Platform/
 │   ├── test_week2.py        # Automated tests: User auth, passwords, profile
 │   ├── test_week3.py        # Automated tests: Blog post CRUD & author guards
 │   ├── test_week4.py        # Automated tests: Reading interface, themes & error views
-│   └── test_week5.py        # Automated tests: Comment threads, validation & author moderation
+│   ├── test_week5.py        # Automated tests: Comment threads, validation & author moderation
+│   └── test_week6.py        # Automated tests: Search, tag filtering, sorting & server pagination
 ├── venv/                    # Isolated Python virtual environment (git-ignored)
 ├── .env.example             # Template for configuration environment variables
 ├── .gitignore               # Comprehensive exclusion rules for Python & Flask
@@ -137,7 +138,17 @@ Blogging_Platform/
 3. **Discussion Thread UI:** Embedded responsive comment thread in `post_detail.html` with jump link in engagement bar.
 4. **Author Moderation Privileges:** Dual authorization allowing either the comment author OR the blog post author (moderator) to delete comments (`403 Forbidden` for non-authorized users).
 5. **Profile & Feed Indicators:** Dynamic reader response counters on user profiles (`user.comments.count()`) and feed article cards.
-6. **Automated Testing:** 8 passing tests in `tests/test_week5.py` (32 total passing tests).
+6. **Automated Testing:** 8 passing tests in `tests/test_week5.py`.
+
+### ✅ Week 6: Full-Text Search, Tag Filtering & Server-Side Pagination
+1. **Multi-Field Full-Text Search:** Case-insensitive search querying title, content, tags, category, and author username (`.ilike()`).
+2. **Category & Tag Filtering:** Dynamic category filter pills and `#tag` keyword filtering across stories.
+3. **Multi-Criteria Sorting:** Sort by `Newest First`, `Oldest First`, and `Most Discussed` (popular comment count descending).
+4. **Server-Side Pagination:** Integrated SQLAlchemy `.paginate(page=p, per_page=6)` with numbered page links, Next/Prev navigation, and current page stats.
+5. **State Preservation:** Search query `q`, active category, tag filter, and sort order are preserved across page navigations.
+6. **Active Filter Tags Bar & Empty State:** Interactive badge tags showing active filters with 1-click removal, reset button, and empty state suggestions.
+7. **Story Tags System:** Added `tags` to `BlogPost` model, `PostForm`, story editor views, and clickable tag pills on `post_detail.html`.
+8. **Automated Testing:** 9 passing tests in `tests/test_week6.py` (41 total cumulative passing tests).
 
 ---
 
@@ -185,7 +196,7 @@ pytest -v
 - [x] **Week 3:** Blog Post CRUD Functionality (Rich Text Editor, Author Restrictions)
 - [x] **Week 4:** Responsive Frontend Polish & Medium-like Reading Interface
 - [x] **Week 5:** Interactive Commenting System & Moderation
-- [ ] **Week 6:** Full-Text Search, Tag Filtering & Server-Side Pagination
+- [x] **Week 6:** Full-Text Search, Tag Filtering & Server-Side Pagination
 - [ ] **Week 7:** Automated Testing Suite & Production Deployment Preparation
 - [ ] **Week 8:** Final Demonstration Video, Documentation & Internship Submission
 
