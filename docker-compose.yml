@@ -1,0 +1,41 @@
+services:
+  web:
+    build: .
+    container_name: blogsphere_web
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - SECRET_KEY=production-secure-random-token-change-in-env
+      - DATABASE_URL=postgresql://blogsphere_user:blogsphere_pass@db:5432/blogsphere_db
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - blogsphere_net
+
+  db:
+    image: postgres:16-alpine
+    container_name: blogsphere_db
+    restart: always
+    environment:
+      - POSTGRES_USER=blogsphere_user
+      - POSTGRES_PASSWORD=blogsphere_pass
+      - POSTGRES_DB=blogsphere_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U blogsphere_user -d blogsphere_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - blogsphere_net
+
+volumes:
+  postgres_data:
+
+networks:
+  blogsphere_net:
+    driver: bridge

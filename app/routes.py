@@ -1,3 +1,4 @@
+import os
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from app import db
 from app.models import ContactMessage, BlogPost, User, Comment
@@ -251,3 +252,32 @@ def internal_error(error):
     """Render custom 500 Internal Server error view and rollback session."""
     db.session.rollback()
     return render_template('errors/500.html'), 500
+
+
+# =========================================================================
+# Production Health Check & Monitoring (Week 7 Deployment Milestone)
+# =========================================================================
+@main.route('/health')
+def health_check():
+    """
+    Production health check endpoint.
+    Used by uptime monitors, container orchestrators, and load balancers.
+    Performs live database ping and reports operational metrics.
+    """
+    db_status = "connected"
+    try:
+        from sqlalchemy import text
+        db.session.execute(text('SELECT 1'))
+    except Exception as e:
+        db_status = f"disconnected: {str(e)}"
+
+    is_healthy = (db_status == "connected")
+    status_code = 200 if is_healthy else 503
+
+    return {
+        "status": "healthy" if is_healthy else "unhealthy",
+        "app": "BlogSphere",
+        "database": db_status,
+        "environment": os.environ.get('FLASK_ENV', 'development'),
+        "version": "1.0.0"
+    }, status_code

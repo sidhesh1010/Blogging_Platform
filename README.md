@@ -4,8 +4,8 @@
 [![Flask](https://img.shields.io/badge/Flask-3.0.3-green.svg)](https://flask.palletsprojects.com/)
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.1-red.svg)](https://www.sqlalchemy.org/)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-purple.svg)](https://getbootstrap.com/)
-[![Tests](https://img.shields.io/badge/Tests-Passing%20(41)-brightgreen.svg)]()
-[![Internship](https://img.shields.io/badge/Internship-Week%206%20Completed-orange.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-Passing%20(48)-brightgreen.svg)]()
+[![Internship](https://img.shields.io/badge/Internship-Week%207%20Completed-orange.svg)]()
 
 > A modern, responsive, and secure full-stack blogging platform developed as part of an **8-Week Technical Internship Program**.
 
@@ -21,7 +21,7 @@
 - **Reading Experience:** Medium-inspired clean typography, reading progress bar, reader mode controls, and dark theme.
 - **Community Engagement:** Interactive comment threads, author moderation, clap counters, and article bookmarks.
 - **Discovery:** Real-time search filtering, category tabs, and server-side pagination.
-- **Production Readiness:** Configurable for local SQLite development and zero-downtime PostgreSQL deployment.
+- **Production Readiness:** Configurable for local SQLite development, containerized Docker deployments, and zero-downtime PostgreSQL deployment.
 
 ---
 
@@ -30,11 +30,14 @@
 | Layer | Technologies |
 | :--- | :--- |
 | **Backend** | Python 3.12, Flask 3.0.3, Werkzeug 3.0.3 |
+| **WSGI Servers** | Gunicorn 22.0, Waitress 3.0 |
 | **Database & ORM** | Flask-SQLAlchemy 3.1.1, SQLAlchemy 2.1, SQLite / PostgreSQL |
 | **Database Migrations** | Flask-Migrate 4.0.7, Alembic |
+| **Containerization & Cloud**| Docker, Docker Compose, Procfile (PaaS ready) |
 | **Authentication & Forms**| Flask-Login, Flask-WTF, WTForms, email-validator |
 | **Frontend** | HTML5, Jinja2 Templates, Bootstrap 5.3, Bootstrap Icons, Custom CSS3 |
-| **Testing** | Pytest 8.2 (41 automated tests passing) |
+| **Testing** | Pytest 8.2 (48 automated tests passing) |
+| **Monitoring** | `/health` endpoint for uptime checks and container probes |
 | **Version Control** | Git, GitHub (`https://github.com/sidhesh1010/Blogging_Platform`) |
 
 ---
@@ -72,23 +75,33 @@ Blogging_Platform/
 │           ├── 403.html     # Custom responsive Forbidden Access view
 │           └── 500.html     # Custom responsive Server Error view
 │
+├── docs/
+│   └── DEPLOYMENT.md        # Comprehensive production deployment, cloud PaaS & Docker guide
 ├── instance/
 │   └── blogsphere.db        # SQLite database (auto-generated, git-ignored)
+├── migrations/              # Alembic database version control and migrations
+│   └── versions/
+│       └── 001_initial_schema.py # Initial database schema migration
 ├── tests/
 │   ├── test_week1.py        # Automated tests: Factory, routes & SQLite
 │   ├── test_week2.py        # Automated tests: User auth, passwords, profile
 │   ├── test_week3.py        # Automated tests: Blog post CRUD & author guards
 │   ├── test_week4.py        # Automated tests: Reading interface, themes & error views
 │   ├── test_week5.py        # Automated tests: Comment threads, validation & author moderation
-│   └── test_week6.py        # Automated tests: Search, tag filtering, sorting & server pagination
+│   ├── test_week6.py        # Automated tests: Search, tag filtering, sorting & server pagination
+│   └── test_week7.py        # Automated tests: Health checks, configs, WSGI export & security
 ├── venv/                    # Isolated Python virtual environment (git-ignored)
+├── .dockerignore            # Container build exclusion patterns
 ├── .env.example             # Template for configuration environment variables
 ├── .gitignore               # Comprehensive exclusion rules for Python & Flask
-├── config.py                # Environment-driven configuration class
+├── config.py                # Environment-driven configuration hierarchy (Dev, Test, Prod)
+├── Dockerfile               # Multi-stage production container definition
+├── docker-compose.yml       # Production stack orchestration with PostgreSQL
+├── Procfile                 # Process manifest for cloud PaaS deployments (Gunicorn)
 ├── pytest.ini               # Pytest root configuration
-├── requirements.txt         # Pinned production and development dependencies
-├── run.py                   # Application entry point & local development server
-└── README.md                # Project documentation and internship report
+├── requirements.txt         # Pinned production and WSGI dependencies
+├── run.py                   # WSGI application callable and local dev runner
+└── README.md                # Project documentation and technical report
 ```
 
 ---
@@ -148,7 +161,17 @@ Blogging_Platform/
 5. **State Preservation:** Search query `q`, active category, tag filter, and sort order are preserved across page navigations.
 6. **Active Filter Tags Bar & Empty State:** Interactive badge tags showing active filters with 1-click removal, reset button, and empty state suggestions.
 7. **Story Tags System:** Added `tags` to `BlogPost` model, `PostForm`, story editor views, and clickable tag pills on `post_detail.html`.
-8. **Automated Testing:** 9 passing tests in `tests/test_week6.py` (41 total cumulative passing tests).
+8. **Automated Testing:** 9 passing tests in `tests/test_week6.py`.
+
+### ✅ Week 7: Automated Testing Suite & Production Deployment Preparation
+1. **Multi-Environment Configuration:** Implemented `DevelopmentConfig`, `TestingConfig`, and hardened `ProductionConfig` (`SESSION_COOKIE_SECURE`, `SESSION_COOKIE_HTTPONLY`, `SESSION_COOKIE_SAMESITE = 'Lax'`).
+2. **Cloud Database URL Normalization:** Handled dynamic transformation of legacy PaaS `postgres://` URLs into SQLAlchemy 2.0+ compliant `postgresql://` URIs.
+3. **Database Migrations Engine:** Initialized Alembic via Flask-Migrate with baseline version `001_initial_schema.py` tracking all 4 relational tables, foreign keys, and indexes.
+4. **Production WSGI Application Serving:** Configured `Gunicorn` (Linux/containerized) and `Waitress` (Windows) with clean WSGI entry point `run:app`.
+5. **Containerization with Docker:** Built multi-stage `Dockerfile`, `.dockerignore`, and `docker-compose.yml` orchestrating PostgreSQL 16 and BlogSphere web service.
+6. **Production Health Check Probe:** Created `/health` endpoint returning live operational JSON metrics and active database connectivity verification.
+7. **Comprehensive Deployment Guide:** Authored [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) covering Render, Docker Compose, Linux VPS Nginx reverse proxy, Systemd, and Let's Encrypt SSL.
+8. **Automated Testing Suite:** 7 passing tests in `tests/test_week7.py` bringing the cumulative test suite to **48 passing tests (100% pass rate)**.
 
 ---
 
@@ -197,7 +220,7 @@ pytest -v
 - [x] **Week 4:** Responsive Frontend Polish & Medium-like Reading Interface
 - [x] **Week 5:** Interactive Commenting System & Moderation
 - [x] **Week 6:** Full-Text Search, Tag Filtering & Server-Side Pagination
-- [ ] **Week 7:** Automated Testing Suite & Production Deployment Preparation
+- [x] **Week 7:** Automated Testing Suite & Production Deployment Preparation
 - [ ] **Week 8:** Final Demonstration Video, Documentation & Internship Submission
 
 ---

@@ -3,7 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
-from config import Config
+from config import Config, config_by_name
 
 # Initialize extensions outside the factory
 db = SQLAlchemy()
@@ -15,11 +15,18 @@ login_manager.login_view = 'auth.login'
 login_manager.login_message = 'Please sign in to access your profile.'
 login_manager.login_message_category = 'info'
 
-def create_app(config_class=Config):
+def create_app(config_class=None):
     """
     Application Factory Pattern for BlogSphere.
     Allows easy configuration for development, testing, and production.
+    Accepts a config class, an environment name string, or defaults to Config.
     """
+    if config_class is None:
+        env = os.environ.get('FLASK_ENV', 'development')
+        config_class = config_by_name.get(env.lower(), Config)
+    elif isinstance(config_class, str):
+        config_class = config_by_name.get(config_class.lower(), Config)
+
     app = Flask(__name__)
     app.config.from_object(config_class)
 
