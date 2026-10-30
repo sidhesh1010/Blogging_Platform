@@ -20,8 +20,9 @@ class User(UserMixin, db.Model):
     avatar = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    # Relationship linking User to their authored blog posts
+    # Relationship linking User to their authored blog posts and comments
     posts = db.relationship('BlogPost', backref='author', lazy='dynamic', cascade='all, delete-orphan')
+    comments = db.relationship('Comment', backref='author', lazy='dynamic', cascade='all, delete-orphan')
 
     def set_password(self, password):
         """Hash and store the user's password securely using Werkzeug."""
@@ -73,6 +74,9 @@ class BlogPost(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+    # Relationship linking BlogPost to reader comments (Week 5)
+    comments = db.relationship('Comment', backref='post', lazy='dynamic', cascade='all, delete-orphan', order_by='Comment.created_at.desc()')
 
     def snippet(self, length=160):
         """Extract a clean text snippet without HTML tags for card previews."""
@@ -159,3 +163,41 @@ class ContactMessage(db.Model):
 
     def __repr__(self):
         return f'<ContactMessage {self.name} - {self.subject}>'
+
+
+class Comment(db.Model):
+    """
+    Comment model representing reader responses to blog posts.
+    Supports user discussion threads and author moderation (Week 5).
+    """
+    __tablename__ = 'comments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), index=True)
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('blog_posts.id', ondelete='CASCADE'), nullable=False)
+
+    @property
+    def date(self):
+        """Formatted comment timestamp."""
+        if self.created_at:
+            return self.created_at.strftime('%b %d, %Y at %H:%M')
+        return 'Recently'
+
+    @property
+    def author_name(self):
+        """Name of the comment author."""
+        return self.author.username if self.author else 'Community Reader'
+
+    @property
+    def avatar(self):
+        """Avatar URL of the comment author."""
+        if self.author:
+            return self.author.get_avatar(48)
+        return 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=48&auto=format&fit=crop&q=80'
+
+    def __repr__(self):
+        return f'<Comment {self.id} on Post {self.post_id}>'

@@ -5,7 +5,7 @@
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.1-red.svg)](https://www.sqlalchemy.org/)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-purple.svg)](https://getbootstrap.com/)
 [![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen.svg)]()
-[![Internship](https://img.shields.io/badge/Internship-Week%204%20Completed-orange.svg)]()
+[![Internship](https://img.shields.io/badge/Internship-Week%205%20Completed-orange.svg)]()
 
 > A modern, responsive, and secure full-stack blogging platform developed as part of an **8-Week Technical Internship Program**.
 
@@ -19,7 +19,7 @@
 - **Authentication & Security:** Multi-user registration, secure password hashing (Werkzeug), and CSRF token protection.
 - **Content Management:** Create, Read, Update, and Delete (CRUD) rich blog posts with formatting and categorization.
 - **Reading Experience:** Medium-inspired clean typography, reading progress bar, reader mode controls, and dark theme.
-- **Community Engagement:** Interactive clap counters, bookmarks, and author-reader interactions.
+- **Community Engagement:** Interactive comment threads, author moderation, clap counters, and article bookmarks.
 - **Discovery:** Real-time search filtering, category tabs, and server-side pagination.
 - **Production Readiness:** Configurable for local SQLite development and zero-downtime PostgreSQL deployment.
 
@@ -34,7 +34,7 @@
 | **Database Migrations** | Flask-Migrate 4.0.7, Alembic |
 | **Authentication & Forms**| Flask-Login, Flask-WTF, WTForms, email-validator |
 | **Frontend** | HTML5, Jinja2 Templates, Bootstrap 5.3, Bootstrap Icons, Custom CSS3 |
-| **Testing** | Pytest 8.2 (24 automated tests passing) |
+| **Testing** | Pytest 8.2 (32 automated tests passing) |
 | **Version Control** | Git, GitHub (`https://github.com/sidhesh1010/Blogging_Platform`) |
 
 ---
@@ -47,9 +47,9 @@ Blogging_Platform/
 ├── app/
 │   ├── __init__.py          # Application Factory (create_app), extension initialization
 │   ├── auth.py              # Authentication Blueprint (login, register, logout, profile)
-│   ├── posts.py             # Blog Post CRUD Blueprint (create, detail, edit, delete)
-│   ├── models.py            # SQLAlchemy models (User, BlogPost, ContactMessage)
-│   ├── forms.py             # WTForms (RegistrationForm, LoginForm, PostForm, UpdateProfileForm)
+│   ├── posts.py             # Blog Post & Comment CRUD Blueprint (create, detail, edit, delete, comment)
+│   ├── models.py            # SQLAlchemy models (User, BlogPost, Comment, ContactMessage)
+│   ├── forms.py             # WTForms (RegistrationForm, LoginForm, PostForm, CommentForm, UpdateProfileForm)
 │   ├── routes.py            # Core routes and custom error handlers (404, 403, 500)
 │   ├── static/
 │   │   ├── css/
@@ -63,10 +63,10 @@ Blogging_Platform/
 │       ├── contact.html     # Interactive contact form backed by SQLite database
 │       ├── login.html       # Secure login portal with remember-me
 │       ├── register.html    # Author registration with validation
-│       ├── profile.html     # Author profile management & published stories list
+│       ├── profile.html     # Author profile management, published stories & comment stats
 │       ├── create_post.html # Rich story creation interface with live word count & preview
 │       ├── edit_post.html   # Author story editor with delete modal confirmation
-│       ├── post_detail.html # Medium-style reading layout with reader mode & share tools
+│       ├── post_detail.html # Medium-style reading layout with discussion thread & reader tools
 │       └── errors/
 │           ├── 404.html     # Custom responsive Page Not Found view
 │           ├── 403.html     # Custom responsive Forbidden Access view
@@ -78,7 +78,8 @@ Blogging_Platform/
 │   ├── test_week1.py        # Automated tests: Factory, routes & SQLite
 │   ├── test_week2.py        # Automated tests: User auth, passwords, profile
 │   ├── test_week3.py        # Automated tests: Blog post CRUD & author guards
-│   └── test_week4.py        # Automated tests: Reading interface, themes & error views
+│   ├── test_week4.py        # Automated tests: Reading interface, themes & error views
+│   └── test_week5.py        # Automated tests: Comment threads, validation & author moderation
 ├── venv/                    # Isolated Python virtual environment (git-ignored)
 ├── .env.example             # Template for configuration environment variables
 ├── .gitignore               # Comprehensive exclusion rules for Python & Flask
@@ -128,7 +129,15 @@ Blogging_Platform/
 5. **1-Click Code Block Copy:** Automatically attaches clipboard copy buttons to code snippets with live tooltip feedback.
 6. **Real-Time Live Search:** Instant keyword filter on the homepage matching titles, categories, and authors with empty results fallback.
 7. **Custom Responsive Error Pages:** Polished error views for 404 (Not Found), 403 (Forbidden), and 500 (Internal Server Error).
-8. **Automated Testing:** 6 passing tests in `tests/test_week4.py` (24 total passing tests).
+8. **Automated Testing:** 6 passing tests in `tests/test_week4.py`.
+
+### ✅ Week 5: Interactive Commenting System & Moderation
+1. **Comment Model:** Relational schema linking reader comments to `User` and `BlogPost` with cascade deletion on user or post deletion.
+2. **Comment Form & Validation:** `CommentForm` with content length constraints (3 to 1000 characters) and CSRF protection.
+3. **Discussion Thread UI:** Embedded responsive comment thread in `post_detail.html` with jump link in engagement bar.
+4. **Author Moderation Privileges:** Dual authorization allowing either the comment author OR the blog post author (moderator) to delete comments (`403 Forbidden` for non-authorized users).
+5. **Profile & Feed Indicators:** Dynamic reader response counters on user profiles (`user.comments.count()`) and feed article cards.
+6. **Automated Testing:** 8 passing tests in `tests/test_week5.py` (32 total passing tests).
 
 ---
 
@@ -175,7 +184,7 @@ pytest -v
 - [x] **Week 2:** User Authentication (Flask-Login, Password Hashing, CSRF Protection, Profile Management)
 - [x] **Week 3:** Blog Post CRUD Functionality (Rich Text Editor, Author Restrictions)
 - [x] **Week 4:** Responsive Frontend Polish & Medium-like Reading Interface
-- [ ] **Week 5:** Interactive Commenting System & Moderation
+- [x] **Week 5:** Interactive Commenting System & Moderation
 - [ ] **Week 6:** Full-Text Search, Tag Filtering & Server-Side Pagination
 - [ ] **Week 7:** Automated Testing Suite & Production Deployment Preparation
 - [ ] **Week 8:** Final Demonstration Video, Documentation & Internship Submission

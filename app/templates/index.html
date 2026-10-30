@@ -128,6 +128,8 @@
               <span><i class="bi bi-calendar3 me-1"></i> {{ featured_post.date }}</span>
               <span>&bull;</span>
               <span><i class="bi bi-clock me-1"></i> {{ featured_post.read_time }}</span>
+              <span>&bull;</span>
+              <span><i class="bi bi-chat-left-text me-1"></i> {{ featured_post.comments.count() if featured_post.comments is defined else 0 }}</span>
               <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill px-2 py-0 ms-2">Featured</span>
             </div>
             <h2 class="h3 fw-bold text-dark mb-3">
@@ -196,6 +198,8 @@
                 <span><i class="bi bi-calendar3 me-1"></i> {{ post.date }}</span>
                 <span>&bull;</span>
                 <span><i class="bi bi-clock me-1"></i> {{ post.read_time }}</span>
+                <span>&bull;</span>
+                <span><i class="bi bi-chat-left-text me-1"></i> {{ post.comments.count() if post.comments is defined else 0 }}</span>
               </div>
               <h3 class="h5 fw-bold text-dark mb-2">
                 {% if post.is_sample %}

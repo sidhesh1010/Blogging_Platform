@@ -105,6 +105,12 @@
             <span class="fw-semibold" id="clapCount">42</span>
           </button>
           <span class="text-secondary small d-none d-sm-inline">Applaud this story</span>
+
+          <!-- Jump to Comments Button (Week 5) -->
+          <a href="#comments-section" class="btn btn-light rounded-pill px-3 py-2 d-flex align-items-center gap-2 text-decoration-none" title="Jump to Discussion">
+            <i class="bi bi-chat-left-text text-primary"></i>
+            <span class="fw-semibold text-dark">{{ post.comments.count() }}</span>
+          </a>
         </div>
 
         <div class="d-flex align-items-center gap-2">
@@ -144,6 +150,142 @@
           </div>
         </div>
       </div>
+
+      <!-- ================= Interactive Comments & Discussion (Week 5) ================= -->
+      <section class="card border-0 shadow-sm p-4 p-md-5 rounded-4 bg-white mb-5" id="comments-section">
+        <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3">
+          <div class="d-flex align-items-center gap-2">
+            <h3 class="h4 fw-bold text-dark mb-0">Discussion</h3>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1">
+              {{ post.comments.count() }} responses
+            </span>
+          </div>
+          <span class="badge bg-light text-secondary border small">Week 5 Milestone</span>
+        </div>
+
+        <!-- Comment Submission Form -->
+        {% if current_user.is_authenticated %}
+          <div class="p-3 bg-light rounded-4 border mb-4">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <img src="{{ current_user.get_avatar(36) }}" alt="{{ current_user.username }}" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
+              <span class="small fw-semibold text-dark">Responding as <strong>{{ current_user.username }}</strong></span>
+            </div>
+
+            <form action="{{ url_for('posts.add_comment', post_id=post.id) }}" method="POST" id="commentForm">
+              {{ comment_form.hidden_tag() }}
+              <div class="mb-3">
+                {{ comment_form.content(class="form-control form-control-custom bg-white", rows="3", placeholder="What are your thoughts? Join the conversation with technical perspectives or feedback...", id="commentTextarea") }}
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted small" style="font-size: 0.78rem;">Keep discussion constructive and respectful.</span>
+                {{ comment_form.submit(class="btn btn-primary-gradient btn-sm px-4 py-2 rounded-pill fw-semibold") }}
+              </div>
+            </form>
+          </div>
+        {% else %}
+          <!-- Unauthenticated Sign-in Prompt -->
+          <div class="p-4 bg-light rounded-4 border text-center mb-4">
+            <div class="mb-2 text-primary fs-3"><i class="bi bi-chat-heart"></i></div>
+            <h5 class="fw-bold text-dark mb-1">Join the Conversation</h5>
+            <p class="text-secondary small mb-3 mx-auto" style="max-width: 440px;">
+              Sign in with your author account to share your thoughts, exchange feedback with the author, or ask questions.
+            </p>
+            <div class="d-flex justify-content-center gap-2">
+              <a href="{{ url_for('auth.login', next=request.path) }}" class="btn btn-primary-gradient btn-sm px-4 py-2 rounded-pill">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Respond
+              </a>
+              <a href="{{ url_for('auth.register') }}" class="btn btn-outline-custom btn-sm px-3 py-2 rounded-pill">
+                Create Free Account
+              </a>
+            </div>
+          </div>
+        {% endif %}
+
+        <!-- Comments Feed -->
+        {% set comments = post.comments.all() %}
+        {% if comments %}
+          <div class="d-flex flex-column gap-3">
+            {% for comment in comments %}
+              <div class="p-3 p-md-4 border rounded-3 bg-white hover-shadow-sm transition" id="comment-{{ comment.id }}">
+                <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                  <div class="d-flex align-items-center gap-2">
+                    <img src="{{ comment.avatar }}" alt="{{ comment.author_name }}" class="rounded-circle shadow-sm" style="width: 38px; height: 38px; object-fit: cover;">
+                    <div>
+                      <div class="d-flex align-items-center gap-2">
+                        <span class="fw-semibold text-dark small">{{ comment.author_name }}</span>
+                        {% if comment.author == post.author %}
+                          <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill" style="font-size: 0.65rem;">
+                            <i class="bi bi-patch-check-fill me-0.5"></i> Story Author
+                          </span>
+                        {% endif %}
+                      </div>
+                      <div class="text-muted" style="font-size: 0.75rem;">
+                        <i class="bi bi-clock me-1"></i> {{ comment.date }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Moderation Controls (Comment Author OR Post Author) -->
+                  {% if current_user.is_authenticated and (current_user == comment.author or current_user == post.author) %}
+                    <div>
+                      <button type="button" class="btn btn-outline-danger btn-sm border-0 py-1 px-2 rounded-pill" data-bs-toggle="modal" data-bs-target="#deleteCommentModal{{ comment.id }}" title="Delete Response">
+                        <i class="bi bi-trash"></i>
+                        {% if current_user == post.author and current_user != comment.author %}
+                          <span class="d-none d-sm-inline ms-1" style="font-size: 0.72rem;">Moderate</span>
+                        {% endif %}
+                      </button>
+                    </div>
+
+                    <!-- Delete Comment Confirmation Modal -->
+                    <div class="modal fade" id="deleteCommentModal{{ comment.id }}" tabindex="-1" aria-labelledby="deleteCommentLabel{{ comment.id }}" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content rounded-4 border-0 shadow">
+                          <div class="modal-header border-0 pb-0">
+                            <h5 class="modal-title fw-bold text-danger" id="deleteCommentLabel{{ comment.id }}">
+                              <i class="bi bi-exclamation-triangle-fill me-2"></i>Delete Response
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body py-3">
+                            <p class="mb-2">Are you sure you want to delete this response by <strong>{{ comment.author_name }}</strong>?</p>
+                            <div class="p-2 bg-light rounded text-secondary small fst-italic mb-2">
+                              "{{ comment.content[:100] }}{% if comment.content|length > 100 %}...{% endif %}"
+                            </div>
+                            {% if current_user == post.author and current_user != comment.author %}
+                              <p class="text-warning-emphasis small mb-0"><i class="bi bi-shield-check me-1"></i>You are moderating this comment as the author of this story.</p>
+                            {% else %}
+                              <p class="text-secondary small mb-0">This action cannot be undone.</p>
+                            {% endif %}
+                          </div>
+                          <div class="modal-footer border-0 pt-0">
+                            <button type="button" class="btn btn-light rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+                            <form action="{{ url_for('posts.delete_comment', comment_id=comment.id) }}" method="POST">
+                              <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token is defined else '' }}">
+                              <button type="submit" class="btn btn-danger rounded-pill px-3">Confirm Delete</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% endif %}
+                </div>
+
+                <!-- Comment Content -->
+                <div class="text-secondary small pt-1 lh-base" style="font-size: 0.93rem;">
+                  {{ comment.content|replace('\n', '<br>')|safe }}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <!-- Empty State -->
+          <div class="text-center py-4 bg-light rounded-4">
+            <div class="text-secondary mb-2"><i class="bi bi-chat-square-dots fs-2 text-primary-subtle"></i></div>
+            <h6 class="fw-bold text-dark mb-1">No responses yet</h6>
+            <p class="text-secondary small mb-0">Be the first to share your perspective on this article.</p>
+          </div>
+        {% endif %}
+      </section>
 
       <!-- Related Stories Recommendations -->
       {% if related_posts %}

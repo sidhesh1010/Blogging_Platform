@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort
 from flask_login import current_user, login_required
 from app import db
-from app.models import BlogPost
-from app.forms import PostForm
+from app.models import BlogPost, Comment
+from app.forms import PostForm, CommentForm
 
 posts = Blueprint('posts', __name__)
 
@@ -44,7 +44,8 @@ def post_detail(post_id):
         BlogPost.id != post.id
     ).order_by(BlogPost.created_at.desc()).limit(3).all()
 
-    return render_template('post_detail.html', post=post, related_posts=related_posts)
+    comment_form = CommentForm()
+    return render_template('post_detail.html', post=post, related_posts=related_posts, comment_form=comment_form)
 
 
 @posts.route('/post/<int:post_id>/edit', methods=['GET', 'POST'])
@@ -98,3 +99,51 @@ def delete_post(post_id):
 
     flash('Your article has been deleted successfully.', 'info')
     return redirect(url_for('main.index'))
+
+
+@posts.route('/post/<int:post_id>/comment', methods=['POST'])
+@login_required
+def add_comment(post_id):
+    """
+    Publish a reader response to a blog post.
+    Requires user authentication (@login_required).
+    """
+    post = BlogPost.query.get_or_404(post_id)
+    form = CommentForm()
+
+    if form.validate_on_submit():
+        comment = Comment(
+            content=form.content.data.strip(),
+            author=current_user,
+            post=post
+        )
+        db.session.add(comment)
+        db.session.commit()
+        flash('Your response has been published successfully!', 'success')
+    else:
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(error, 'danger')
+
+    return redirect(url_for('posts.post_detail', post_id=post.id) + '#comments-section')
+
+
+@posts.route('/comment/<int:comment_id>/delete', methods=['POST'])
+@login_required
+def delete_comment(comment_id):
+    """
+    Delete a comment.
+    Authorization: Allowed for the comment author OR the blog post author (moderation).
+    """
+    comment = Comment.query.get_or_404(comment_id)
+    post_id = comment.post_id
+
+    # Moderation Check: Allowed for comment author OR article author
+    if comment.author != current_user and comment.post.author != current_user:
+        abort(403)
+
+    db.session.delete(comment)
+    db.session.commit()
+
+    flash('The response has been removed.', 'info')
+    return redirect(url_for('posts.post_detail', post_id=post_id) + '#comments-section')

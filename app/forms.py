@@ -106,3 +106,14 @@ class PostForm(FlaskForm):
         DataRequired(message="Article content cannot be empty.")
     ])
     submit = SubmitField('Publish Story')
+
+
+class CommentForm(FlaskForm):
+    """
+    Form for posting reader feedback and comments (Week 5).
+    """
+    content = TextAreaField('Your Response', validators=[
+        DataRequired(message="Response cannot be empty."),
+        Length(min=3, max=1000, message="Response must be between 3 and 1000 characters.")
+    ])
+    submit = SubmitField('Publish Response')
