@@ -2,11 +2,18 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_login import LoginManager
 from config import Config
 
 # Initialize extensions outside the factory
 db = SQLAlchemy()
 migrate = Migrate()
+login_manager = LoginManager()
+
+# Configure Flask-Login defaults
+login_manager.login_view = 'auth.login'
+login_manager.login_message = 'Please sign in to access your profile.'
+login_manager.login_message_category = 'info'
 
 def create_app(config_class=Config):
     """
@@ -25,12 +32,16 @@ def create_app(config_class=Config):
     # Initialize extensions with the application instance
     db.init_app(app)
     migrate.init_app(app, db)
+    login_manager.init_app(app)
 
     # Register blueprints
-    from app.routes import main
-    app.register_blueprint(main)
+    from app.routes import main as main_blueprint
+    app.register_blueprint(main_blueprint)
 
-    # Import models so SQLAlchemy is aware of them
+    from app.auth import auth as auth_blueprint
+    app.register_blueprint(auth_blueprint)
+
+    # Import models so SQLAlchemy and Flask-Login are aware of them
     from app import models
 
     return app

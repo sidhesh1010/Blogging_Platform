@@ -59,14 +59,46 @@
             </li>
           </ul>
 
-          <!-- Action Buttons (Prepared for Week 2 User Authentication) -->
+          <!-- Action Buttons / User Menu -->
           <div class="d-flex align-items-center gap-2">
             <a href="https://github.com/sidhesh1010/Blogging_Platform" target="_blank" rel="noopener noreferrer" class="btn btn-outline-custom d-flex align-items-center gap-2 py-2" title="View Source on GitHub">
               <i class="bi bi-github"></i> <span class="d-none d-sm-inline">GitHub</span>
             </a>
-            <button type="button" class="btn btn-primary-gradient d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#authPreviewModal" id="btnGetStarted">
-              <span>Get Started</span> <i class="bi bi-arrow-right"></i>
-            </button>
+
+            {% if current_user.is_authenticated %}
+              <!-- User Profile Dropdown Menu -->
+              <div class="dropdown">
+                <button class="btn btn-outline-custom d-flex align-items-center gap-2 dropdown-toggle py-2" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="userMenuDropdown">
+                  <img src="{{ current_user.get_avatar(32) }}" alt="{{ current_user.username }}" class="rounded-circle" style="width: 24px; height: 24px; object-fit: cover;">
+                  <span class="fw-semibold text-dark">{{ current_user.username }}</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-3 py-2 mt-2" aria-labelledby="userMenuDropdown">
+                  <li class="px-3 py-2 border-bottom mb-1">
+                    <span class="text-secondary small d-block">Signed in as</span>
+                    <strong class="text-dark small text-truncate d-block" style="max-width: 180px;">{{ current_user.email }}</strong>
+                  </li>
+                  <li>
+                    <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ url_for('auth.profile') }}">
+                      <i class="bi bi-person-circle text-primary"></i> My Profile
+                    </a>
+                  </li>
+                  <li><hr class="dropdown-divider my-1"></li>
+                  <li>
+                    <a class="dropdown-item py-2 d-flex align-items-center gap-2 text-danger" href="{{ url_for('auth.logout') }}">
+                      <i class="bi bi-box-arrow-right"></i> Sign Out
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            {% else %}
+              <!-- Unauthenticated State: Sign In and Register Buttons -->
+              <a href="{{ url_for('auth.login') }}" class="btn btn-outline-custom d-flex align-items-center gap-2 py-2" id="navBtnSignIn">
+                <i class="bi bi-box-arrow-in-right"></i> <span class="d-none d-md-inline">Sign In</span>
+              </a>
+              <a href="{{ url_for('auth.register') }}" class="btn btn-primary-gradient d-flex align-items-center gap-2" id="navBtnGetStarted">
+                <span>Get Started</span> <i class="bi bi-arrow-right"></i>
+              </a>
+            {% endif %}
           </div>
         </div>
       </div>

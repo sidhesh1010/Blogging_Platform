@@ -133,7 +133,7 @@ pytest -v
 ## 📅 8-Week Internship Development Roadmap
 
 - [x] **Week 1:** Flask Setup, Application Factory, SQLite & Base Architecture
-- [ ] **Week 2:** User Authentication (Flask-Login, Password Hashing, CSRF Protection)
+- [x] **Week 2:** User Authentication (Flask-Login, Password Hashing, CSRF Protection, Profile Management)
 - [ ] **Week 3:** Blog Post CRUD Functionality (Rich Text Editor, Author Restrictions)
 - [ ] **Week 4:** Responsive Frontend Polish & Medium-like Reading Interface
 - [ ] **Week 5:** Interactive Commenting System & Moderation
