@@ -5,7 +5,7 @@
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.1-red.svg)](https://www.sqlalchemy.org/)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-purple.svg)](https://getbootstrap.com/)
 [![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen.svg)]()
-[![Internship](https://img.shields.io/badge/Internship-Week%201%20Completed-orange.svg)]()
+[![Internship](https://img.shields.io/badge/Internship-Week%203%20Completed-orange.svg)]()
 
 > A modern, responsive, and secure full-stack blogging platform developed as part of an **8-Week Technical Internship Program**.
 
@@ -33,7 +33,7 @@
 | **Database Migrations** | Flask-Migrate 4.0.7, Alembic |
 | **Authentication & Forms**| Flask-Login, Flask-WTF, WTForms, email-validator |
 | **Frontend** | HTML5, Jinja2 Templates, Bootstrap 5.3, Bootstrap Icons, Custom CSS3 |
-| **Testing** | Pytest 8.2 |
+| **Testing** | Pytest 8.2 (18 automated tests passing) |
 | **Version Control** | Git, GitHub (`https://github.com/sidhesh1010/Blogging_Platform`) |
 
 ---
@@ -45,8 +45,11 @@ Blogging_Platform/
 │
 ├── app/
 │   ├── __init__.py          # Application Factory (create_app), extension initialization
-│   ├── models.py            # SQLAlchemy database models (ContactMessage, User, BlogPost)
-│   ├── routes.py            # Application routes & Blueprint handlers
+│   ├── auth.py              # Authentication Blueprint (login, register, logout, profile)
+│   ├── posts.py             # Blog Post CRUD Blueprint (create, detail, edit, delete)
+│   ├── models.py            # SQLAlchemy models (User, BlogPost, ContactMessage)
+│   ├── forms.py             # WTForms (RegistrationForm, LoginForm, PostForm, UpdateProfileForm)
+│   ├── routes.py            # Core routes (index, about, contact)
 │   ├── static/
 │   │   ├── css/
 │   │   │   └── style.css    # Custom design system, typography & card animations
@@ -54,14 +57,22 @@ Blogging_Platform/
 │   │       └── main.js      # Auto-dismiss alerts, category filter, client UI
 │   └── templates/
 │       ├── base.html        # Jinja2 master layout with sticky navbar, alerts & footer
-│       ├── index.html       # Hero section, category pills, featured spotlight & cards
+│       ├── index.html       # Hero section, category pills, live post cards & spotlight
 │       ├── about.html       # Project mission, technology matrix & 8-week roadmap
-│       └── contact.html     # Interactive contact form backed by SQLite database
+│       ├── contact.html     # Interactive contact form backed by SQLite database
+│       ├── login.html       # Secure login portal with remember-me
+│       ├── register.html    # Author registration with validation
+│       ├── profile.html     # Author profile management & published stories list
+│       ├── create_post.html # Rich story creation interface with live word count & preview
+│       ├── edit_post.html   # Author story editor with delete modal confirmation
+│       └── post_detail.html # Medium-style reading layout with related stories
 │
 ├── instance/
 │   └── blogsphere.db        # SQLite database (auto-generated, git-ignored)
 ├── tests/
-│   └── test_week1.py        # Automated test suite verifying routes and database
+│   ├── test_week1.py        # Automated tests: Factory, routes & SQLite
+│   ├── test_week2.py        # Automated tests: User auth, passwords, profile
+│   └── test_week3.py        # Automated tests: Blog post CRUD & author guards
 ├── venv/                    # Isolated Python virtual environment (git-ignored)
 ├── .env.example             # Template for configuration environment variables
 ├── .gitignore               # Comprehensive exclusion rules for Python & Flask
@@ -74,21 +85,34 @@ Blogging_Platform/
 
 ---
 
-## 🚀 Week 1 Milestone: Setup & Architecture
+## 🚀 Milestones Progress
 
-### Tasks Completed in Week 1:
-1. ✅ **Python Virtual Environment:** Created isolated environment (`venv`) using Python 3.12.
-2. ✅ **Dependencies Installed:** Configured and installed Flask, Flask-SQLAlchemy, Flask-Migrate, Flask-Login, Flask-WTF, Werkzeug, and Pytest.
-3. ✅ **Application Factory Pattern:** Structured `app/__init__.py` using the `create_app()` factory pattern for scalable modular growth.
-4. ✅ **SQLite & SQLAlchemy:** Configured `config.py` with dynamic `DATABASE_URL` fallback to `sqlite:///blogsphere.db`.
-5. ✅ **Database Model:** Implemented `ContactMessage` model in `app/models.py` to verify database table creation and persistence.
-6. ✅ **Modular Routing:** Configured `main` Flask Blueprint in `app/routes.py`.
-7. ✅ **Jinja2 Master Layout:** Built `base.html` with Bootstrap 5.3, Bootstrap Icons, custom Google Fonts (`Outfit` & `Plus Jakarta Sans`), and toast alerts.
-8. ✅ **Responsive Homepage:** Designed `index.html` with hero banner, live stats, category filtering, and responsive article cards.
-9. ✅ **About & Contact Pages:** Created `about.html` (featuring the 8-week roadmap) and `contact.html` (connected to SQLite database).
-10. ✅ **Static Assets:** Created `style.css` (custom design tokens and hover effects) and `main.js` (client interactions and alert dismissal).
-11. ✅ **Automated Testing:** Implemented and passed all 4 test cases in `tests/test_week1.py` with 100% pass rate.
-12. ✅ **Git Architecture:** Prepared `.gitignore`, `requirements.txt`, and `.env.example`.
+### ✅ Week 1: Setup & Architecture
+1. **Python Virtual Environment:** Created isolated environment (`venv`) using Python 3.12.
+2. **Dependencies Installed:** Flask, Flask-SQLAlchemy, Flask-Migrate, Flask-Login, Flask-WTF, Werkzeug, Pytest.
+3. **Application Factory Pattern:** Structured `app/__init__.py` with `create_app()`.
+4. **SQLite & SQLAlchemy:** Dynamic `DATABASE_URL` with fallback to `sqlite:///blogsphere.db`.
+5. **Database Model:** Implemented `ContactMessage` model in `app/models.py`.
+6. **Master Layout & Pages:** `base.html`, `index.html`, `about.html`, `contact.html`.
+7. **Automated Testing:** 4 passing tests in `tests/test_week1.py`.
+
+### ✅ Week 2: User Authentication & Profiles
+1. **User Model:** Implemented `User` model with Werkzeug secure password hashing (`scrypt`).
+2. **Session Management:** Flask-Login integration (`@login_required`, `current_user`, session cookies).
+3. **Registration & Login:** Forms with email/username uniqueness checks and validation.
+4. **Author Profiles:** Edit username and bio, dynamic Gravatar generation, security overview.
+5. **CSRF Protection:** Integrated Flask-WTF CSRF tokens on all form submissions.
+6. **Automated Testing:** 6 passing tests in `tests/test_week2.py`.
+
+### ✅ Week 3: Blog Post CRUD & Author Safeguards
+1. **BlogPost Model:** Relational schema linked to `User` via foreign key and cascade deletion.
+2. **Helper Properties:** Clean text snippet generator (`snippet()`), reading time estimator (`read_time()`), category fallback images (`default_image()`).
+3. **Story Creation (`/post/create`):** Rich editorial template with live character/word count, dynamic reading time, category selection, and live image preview.
+4. **Story Reading (`/post/<id>`):** Medium-like reading layout with breadcrumbs, author profile card, like/clap counter, social share triggers, and related articles.
+5. **Story Editing (`/post/<id>/edit`):** Author-restricted editing route (`post.author == current_user` safeguard returning 403 Forbidden for unauthorized users).
+6. **Story Deletion (`/post/<id>/delete`):** Secure POST deletion with confirmation modal and author authorization check.
+7. **Homepage & Profile Integration:** Real database stories dynamically populated on the homepage with graceful fallback; profile lists author's stories with quick edit/delete controls.
+8. **Automated Testing:** 8 passing tests in `tests/test_week3.py` (18 total across test suite).
 
 ---
 
@@ -107,7 +131,6 @@ cd Blogging_Platform
 # Windows PowerShell
 .\venv\Scripts\Activate.ps1
 ```
-*(If you are setting up fresh on another machine: run `python -m venv venv` first, then activate).*
 
 ### 3. Install Dependencies
 ```powershell
@@ -134,7 +157,7 @@ pytest -v
 
 - [x] **Week 1:** Flask Setup, Application Factory, SQLite & Base Architecture
 - [x] **Week 2:** User Authentication (Flask-Login, Password Hashing, CSRF Protection, Profile Management)
-- [ ] **Week 3:** Blog Post CRUD Functionality (Rich Text Editor, Author Restrictions)
+- [x] **Week 3:** Blog Post CRUD Functionality (Rich Text Editor, Author Restrictions)
 - [ ] **Week 4:** Responsive Frontend Polish & Medium-like Reading Interface
 - [ ] **Week 5:** Interactive Commenting System & Moderation
 - [ ] **Week 6:** Full-Text Search, Tag Filtering & Server-Side Pagination

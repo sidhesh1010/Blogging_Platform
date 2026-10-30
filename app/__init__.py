@@ -41,6 +41,9 @@ def create_app(config_class=Config):
     from app.auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
 
+    from app.posts import posts as posts_blueprint
+    app.register_blueprint(posts_blueprint)
+
     # Import models so SQLAlchemy and Flask-Login are aware of them
     from app import models
 

@@ -114,7 +114,13 @@
               <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill px-2 py-0 ms-2">Featured</span>
             </div>
             <h2 class="h3 fw-bold text-dark mb-3">
-              {{ featured_post.title }}
+              {% if featured_post.is_sample %}
+                {{ featured_post.title }}
+              {% else %}
+                <a href="{{ url_for('posts.post_detail', post_id=featured_post.id) }}" class="text-dark text-decoration-none">
+                  {{ featured_post.title }}
+                </a>
+              {% endif %}
             </h2>
             <p class="text-secondary mb-4">
               {{ featured_post.summary }}
@@ -123,15 +129,21 @@
           
           <div class="d-flex align-items-center justify-content-between pt-3 border-top">
             <div class="d-flex align-items-center gap-2">
-              <img src="{{ featured_post.avatar }}" alt="{{ featured_post.author }}" class="author-avatar">
+              <img src="{{ featured_post.avatar }}" alt="{{ featured_post.author_name if featured_post.author_name is defined else featured_post.author }}" class="author-avatar">
               <div>
-                <div class="fw-semibold text-dark small">{{ featured_post.author }}</div>
+                <div class="fw-semibold text-dark small">{{ featured_post.author_name if featured_post.author_name is defined else featured_post.author }}</div>
                 <div class="text-muted" style="font-size: 0.75rem;">{{ featured_post.author_role }}</div>
               </div>
             </div>
-            <button class="btn btn-outline-custom btn-sm" data-bs-toggle="modal" data-bs-target="#authPreviewModal">
-              Read Story <i class="bi bi-arrow-right ms-1"></i>
-            </button>
+            {% if featured_post.is_sample %}
+              <button class="btn btn-outline-custom btn-sm" data-bs-toggle="modal" data-bs-target="#authPreviewModal">
+                Read Story <i class="bi bi-arrow-right ms-1"></i>
+              </button>
+            {% else %}
+              <a href="{{ url_for('posts.post_detail', post_id=featured_post.id) }}" class="btn btn-outline-custom btn-sm">
+                Read Story <i class="bi bi-arrow-right ms-1"></i>
+              </a>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -152,7 +164,13 @@
       <div class="col-lg-4 col-md-6 blog-card-item" data-category="{{ post.category }}">
         <div class="card card-blog">
           <div class="card-blog-img">
-            <img src="{{ post.image }}" alt="{{ post.title }}">
+            {% if not post.is_sample %}
+              <a href="{{ url_for('posts.post_detail', post_id=post.id) }}">
+                <img src="{{ post.image }}" alt="{{ post.title }}">
+              </a>
+            {% else %}
+              <img src="{{ post.image }}" alt="{{ post.title }}">
+            {% endif %}
             <span class="badge-category">{{ post.category }}</span>
           </div>
           <div class="p-4 d-flex flex-column flex-grow-1 justify-content-between">
@@ -163,7 +181,13 @@
                 <span><i class="bi bi-clock me-1"></i> {{ post.read_time }}</span>
               </div>
               <h3 class="h5 fw-bold text-dark mb-2">
-                {{ post.title }}
+                {% if post.is_sample %}
+                  {{ post.title }}
+                {% else %}
+                  <a href="{{ url_for('posts.post_detail', post_id=post.id) }}" class="text-dark text-decoration-none">
+                    {{ post.title }}
+                  </a>
+                {% endif %}
               </h3>
               <p class="text-secondary small mb-3">
                 {{ post.summary }}
@@ -172,15 +196,21 @@
 
             <div class="d-flex align-items-center justify-content-between pt-3 border-top">
               <div class="d-flex align-items-center gap-2">
-                <img src="{{ post.avatar }}" alt="{{ post.author }}" class="author-avatar">
+                <img src="{{ post.avatar }}" alt="{{ post.author_name if post.author_name is defined else post.author }}" class="author-avatar">
                 <div>
-                  <div class="fw-semibold text-dark small">{{ post.author }}</div>
+                  <div class="fw-semibold text-dark small">{{ post.author_name if post.author_name is defined else post.author }}</div>
                   <div class="text-muted" style="font-size: 0.72rem;">{{ post.author_role }}</div>
                 </div>
               </div>
-              <button class="btn btn-link text-primary p-0 text-decoration-none fw-semibold small" data-bs-toggle="modal" data-bs-target="#authPreviewModal">
-                Read <i class="bi bi-chevron-right"></i>
-              </button>
+              {% if post.is_sample %}
+                <button class="btn btn-link text-primary p-0 text-decoration-none fw-semibold small" data-bs-toggle="modal" data-bs-target="#authPreviewModal">
+                  Read <i class="bi bi-chevron-right"></i>
+                </button>
+              {% else %}
+                <a href="{{ url_for('posts.post_detail', post_id=post.id) }}" class="btn btn-link text-primary p-0 text-decoration-none fw-semibold small">
+                  Read <i class="bi bi-chevron-right"></i>
+                </a>
+              {% endif %}
             </div>
           </div>
         </div>

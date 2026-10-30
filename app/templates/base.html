@@ -66,6 +66,11 @@
             </a>
 
             {% if current_user.is_authenticated %}
+              <!-- Write Post CTA Button (Week 3) -->
+              <a href="{{ url_for('posts.create_post') }}" class="btn btn-primary-gradient d-flex align-items-center gap-2 py-2" id="navBtnWrite" title="Write a New Story">
+                <i class="bi bi-pencil-square"></i> <span class="d-none d-sm-inline">Write</span>
+              </a>
+
               <!-- User Profile Dropdown Menu -->
               <div class="dropdown">
                 <button class="btn btn-outline-custom d-flex align-items-center gap-2 dropdown-toggle py-2" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="userMenuDropdown">
@@ -76,6 +81,11 @@
                   <li class="px-3 py-2 border-bottom mb-1">
                     <span class="text-secondary small d-block">Signed in as</span>
                     <strong class="text-dark small text-truncate d-block" style="max-width: 180px;">{{ current_user.email }}</strong>
+                  </li>
+                  <li>
+                    <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ url_for('posts.create_post') }}">
+                      <i class="bi bi-pencil-square text-primary"></i> Write Story
+                    </a>
                   </li>
                   <li>
                     <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ url_for('auth.profile') }}">

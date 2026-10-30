@@ -1,0 +1,277 @@
+{% extends 'base.html' %}
+
+{% block title %}Write a New Story &bull; BlogSphere{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}" class="text-decoration-none">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Write a Story</li>
+      </ol>
+    </nav>
+
+    <div class="row g-4">
+      <!-- Main Writing Column -->
+      <div class="col-lg-8">
+        <div class="card border-0 shadow-sm p-4 p-md-5 rounded-4 bg-white">
+          <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3">
+            <div>
+              <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 rounded-pill small mb-2">
+                <i class="bi bi-pencil-fill me-1"></i> Week 3 Milestone
+              </span>
+              <h1 class="h3 fw-bold text-dark mb-1">Craft Your Story</h1>
+              <p class="text-secondary small mb-0">Publish technical insights, tutorials, and architectural thoughts.</p>
+            </div>
+            <div class="d-none d-md-block text-end">
+              <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill small" id="readingTimeBadge">
+                <i class="bi bi-clock me-1"></i> <span id="readingTimeText">1 min read</span>
+              </span>
+            </div>
+          </div>
+
+          <form method="POST" action="{{ url_for('posts.create_post') }}" id="postEditorForm" novalidate>
+            {{ form.hidden_tag() }}
+
+            <!-- Title Field -->
+            <div class="mb-4">
+              {{ form.title.label(class="form-label fw-bold text-dark fs-6") }}
+              {% if form.title.errors %}
+                {{ form.title(class="form-control form-control-lg form-control-custom fw-semibold is-invalid", placeholder="e.g. Building High-Throughput APIs with Python & Flask", id="postTitleInput") }}
+                <div class="invalid-feedback">
+                  {% for error in form.title.errors %}{{ error }}{% endfor %}
+                </div>
+              {% else %}
+                {{ form.title(class="form-control form-control-lg form-control-custom fw-semibold", placeholder="e.g. Building High-Throughput APIs with Python & Flask", id="postTitleInput") }}
+              {% endif %}
+              <div class="form-text text-muted" style="font-size: 0.78rem;">
+                Craft a clear, captivating title between 5 and 150 characters.
+              </div>
+            </div>
+
+            <!-- Category & Image URL Row -->
+            <div class="row g-3 mb-4">
+              <div class="col-md-5">
+                {{ form.category.label(class="form-label fw-semibold text-dark small") }}
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-secondary"><i class="bi bi-tag"></i></span>
+                  {{ form.category(class="form-select form-control-custom border-start-0", id="postCategorySelect") }}
+                </div>
+              </div>
+
+              <div class="col-md-7">
+                {{ form.featured_image.label(class="form-label fw-semibold text-dark small") }}
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-secondary"><i class="bi bi-image"></i></span>
+                  {% if form.featured_image.errors %}
+                    {{ form.featured_image(class="form-control form-control-custom border-start-0 is-invalid", placeholder="https://images.unsplash.com/...", id="postImageInput") }}
+                    <div class="invalid-feedback">
+                      {% for error in form.featured_image.errors %}{{ error }}{% endfor %}
+                    </div>
+                  {% else %}
+                    {{ form.featured_image(class="form-control form-control-custom border-start-0", placeholder="https://images.unsplash.com/...", id="postImageInput") }}
+                  {% endif %}
+                </div>
+                <div class="form-text text-muted" style="font-size: 0.75rem;">
+                  Optional. Leave empty for a curated category cover image.
+                </div>
+              </div>
+            </div>
+
+            <!-- Formatting Toolbar -->
+            <div class="mb-2 d-flex flex-wrap align-items-center gap-1 p-2 bg-light rounded-3 border">
+              <span class="small text-secondary fw-semibold px-2 d-none d-sm-inline">Format:</span>
+              <button type="button" class="btn btn-sm btn-white border px-2 py-1 format-btn" data-tag="**" title="Bold">
+                <i class="bi bi-type-bold"></i>
+              </button>
+              <button type="button" class="btn btn-sm btn-white border px-2 py-1 format-btn" data-tag="*" title="Italic">
+                <i class="bi bi-type-italic"></i>
+              </button>
+              <button type="button" class="btn btn-sm btn-white border px-2 py-1 format-btn" data-tag="## " data-prefix="true" title="Heading 2">
+                <i class="bi bi-type-h2"></i>
+              </button>
+              <button type="button" class="btn btn-sm btn-white border px-2 py-1 format-btn" data-tag="### " data-prefix="true" title="Heading 3">
+                <i class="bi bi-type-h3"></i>
+              </button>
+              <button type="button" class="btn btn-sm btn-white border px-2 py-1 format-btn" data-tag="> " data-prefix="true" title="Blockquote">
+                <i class="bi bi-quote"></i>
+              </button>
+              <button type="button" class="btn btn-sm btn-white border px-2 py-1 format-btn" data-tag="```\n" data-close="\n```" title="Code Block">
+                <i class="bi bi-code-slash"></i>
+              </button>
+              <button type="button" class="btn btn-sm btn-white border px-2 py-1 format-btn" data-tag="`" title="Inline Code">
+                <i class="bi bi-code"></i>
+              </button>
+              <button type="button" class="btn btn-sm btn-white border px-2 py-1 format-btn" data-tag="[Link Title](https://...)" title="Hyperlink">
+                <i class="bi bi-link-45deg"></i>
+              </button>
+            </div>
+
+            <!-- Content Field -->
+            <div class="mb-4">
+              {{ form.content.label(class="form-label fw-bold text-dark fs-6") }}
+              {% if form.content.errors %}
+                {{ form.content(class="form-control form-control-custom is-invalid", rows="14", placeholder="Start typing your story here... Markdown & standard formatting supported.", id="postContentTextarea") }}
+                <div class="invalid-feedback">
+                  {% for error in form.content.errors %}{{ error }}{% endfor %}
+                </div>
+              {% else %}
+                {{ form.content(class="form-control form-control-custom", rows="14", placeholder="Start typing your story here... Markdown & standard formatting supported.", id="postContentTextarea") }}
+              {% endif %}
+              
+              <!-- Character & Word Counter Bar -->
+              <div class="d-flex justify-content-between align-items-center mt-2 px-1">
+                <span class="text-secondary small">
+                  <span id="wordCount">0</span> words &bull; <span id="charCount">0</span> characters
+                </span>
+                <span class="text-muted small">Supports Markdown &amp; HTML syntax</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+              <a href="{{ url_for('main.index') }}" class="btn btn-light rounded-pill px-4 py-2">
+                <i class="bi bi-arrow-left me-1"></i> Cancel
+              </a>
+              <div class="d-flex gap-2">
+                {{ form.submit(class="btn btn-primary-gradient px-4 py-2 rounded-pill fw-semibold") }}
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right Column: Live Preview & Author Guidelines -->
+      <div class="col-lg-4">
+        <!-- Live Cover Image Preview Box -->
+        <div class="card border-0 shadow-sm p-4 rounded-4 bg-white mb-4">
+          <h6 class="fw-bold text-dark mb-3">
+            <i class="bi bi-eye text-primary me-2"></i>Live Cover Preview
+          </h6>
+          <div class="position-relative overflow-hidden rounded-3 bg-light border mb-3" style="height: 180px;">
+            <img id="imagePreview" src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=900&auto=format&fit=crop&q=80" alt="Cover Preview" class="w-100 h-100" style="object-fit: cover;">
+            <div class="position-absolute top-0 start-0 m-2">
+              <span class="badge bg-dark bg-opacity-75 rounded-pill px-2 py-1 small" id="previewCategoryBadge">Python</span>
+            </div>
+          </div>
+          <p class="text-secondary small mb-0">
+            Articles featuring striking, high-resolution header imagery receive up to <strong>3x more reads</strong>.
+          </p>
+        </div>
+
+        <!-- Publishing Best Practices -->
+        <div class="card border-0 shadow-sm p-4 rounded-4 bg-white">
+          <h6 class="fw-bold text-dark mb-3">
+            <i class="bi bi-lightning-charge text-warning me-2"></i>Publishing Checklist
+          </h6>
+          <ul class="list-unstyled mb-0 d-flex flex-column gap-3 small text-secondary">
+            <li class="d-flex align-items-start gap-2">
+              <i class="bi bi-check2-circle text-success fs-6 mt-0.5"></i>
+              <div><strong>Clear Hierarchy:</strong> Use headings (H2, H3) to divide complex concepts.</div>
+            </li>
+            <li class="d-flex align-items-start gap-2">
+              <i class="bi bi-check2-circle text-success fs-6 mt-0.5"></i>
+              <div><strong>Code Blocks:</strong> Wrap code snippets in triple backticks for syntax cleanliness.</div>
+            </li>
+            <li class="d-flex align-items-start gap-2">
+              <i class="bi bi-check2-circle text-success fs-6 mt-0.5"></i>
+              <div><strong>Category Focus:</strong> Select the most relevant category to boost topic discovery.</div>
+            </li>
+            <li class="d-flex align-items-start gap-2">
+              <i class="bi bi-check2-circle text-success fs-6 mt-0.5"></i>
+              <div><strong>Author Attribution:</strong> Published under your verified profile: <strong>{{ current_user.username }}</strong>.</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Interactive Script for Word Counter, Live Image Preview & Formatting Toolbar -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const textarea = document.getElementById('postContentTextarea');
+  const wordCountSpan = document.getElementById('wordCount');
+  const charCountSpan = document.getElementById('charCount');
+  const readingTimeText = document.getElementById('readingTimeText');
+  const imageInput = document.getElementById('postImageInput');
+  const imagePreview = document.getElementById('imagePreview');
+  const categorySelect = document.getElementById('postCategorySelect');
+  const previewCategoryBadge = document.getElementById('previewCategoryBadge');
+
+  const defaultCategoryImages = {
+    'Python': 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=900&auto=format&fit=crop&q=80',
+    'Architecture': 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=900&auto=format&fit=crop&q=80',
+    'UI/UX Design': 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=900&auto=format&fit=crop&q=80',
+    'Security': 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=900&auto=format&fit=crop&q=80',
+    'AI & ML': 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=900&auto=format&fit=crop&q=80',
+    'Career': 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=900&auto=format&fit=crop&q=80',
+    'General': 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=900&auto=format&fit=crop&q=80'
+  };
+
+  // Word count and Reading Time
+  function updateCounters() {
+    if (!textarea) return;
+    const text = textarea.value.trim();
+    const chars = text.length;
+    const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+    const minutes = Math.max(1, Math.round(words / 200));
+
+    if (wordCountSpan) wordCountSpan.textContent = words;
+    if (charCountSpan) charCountSpan.textContent = chars;
+    if (readingTimeText) readingTimeText.textContent = `${minutes} min read`;
+  }
+
+  if (textarea) {
+    textarea.addEventListener('input', updateCounters);
+    updateCounters();
+  }
+
+  // Cover Image Preview
+  function updateImagePreview() {
+    if (!imagePreview) return;
+    const customUrl = imageInput ? imageInput.value.trim() : '';
+    const selectedCat = categorySelect ? categorySelect.value : 'Python';
+
+    if (previewCategoryBadge) {
+      previewCategoryBadge.textContent = selectedCat;
+    }
+
+    if (customUrl) {
+      imagePreview.src = customUrl;
+    } else {
+      imagePreview.src = defaultCategoryImages[selectedCat] || defaultCategoryImages['General'];
+    }
+  }
+
+  if (imageInput) imageInput.addEventListener('input', updateImagePreview);
+  if (categorySelect) categorySelect.addEventListener('change', updateImagePreview);
+  updateImagePreview();
+
+  // Toolbar Formatting buttons
+  document.querySelectorAll('.format-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      if (!textarea) return;
+      const tag = this.dataset.tag;
+      const closeTag = this.dataset.close || tag;
+      const isPrefix = this.dataset.prefix === 'true';
+
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const selected = textarea.value.substring(start, end);
+
+      if (isPrefix) {
+        textarea.setRangeText(tag + selected, start, end, 'select');
+      } else {
+        textarea.setRangeText(tag + selected + closeTag, start, end, 'select');
+      }
+      textarea.focus();
+      updateCounters();
+    });
+  });
+});
+</script>
+{% endblock %}

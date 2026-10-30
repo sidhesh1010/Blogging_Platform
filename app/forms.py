@@ -1,6 +1,6 @@
 import re
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError, Regexp
 from app.models import User
 
@@ -80,3 +80,29 @@ class UpdateProfileForm(FlaskForm):
             user = User.query.filter_by(username=username.data.strip()).first()
             if user:
                 raise ValidationError('This username is already in use by another author.')
+
+
+class PostForm(FlaskForm):
+    """
+    Form for creating and editing blog posts (Week 3 CRUD).
+    """
+    title = StringField('Article Title', validators=[
+        DataRequired(message="Please enter an article title."),
+        Length(min=5, max=150, message="Title must be between 5 and 150 characters.")
+    ])
+    category = SelectField('Category', choices=[
+        ('Python', 'Python & Flask'),
+        ('Architecture', 'Software Architecture'),
+        ('UI/UX Design', 'UI/UX Design'),
+        ('Security', 'Cybersecurity & Auth'),
+        ('AI & ML', 'AI & Machine Learning'),
+        ('Career', 'Career & Engineering Life'),
+        ('General', 'General Tech')
+    ], default='Python', validators=[DataRequired()])
+    featured_image = StringField('Cover Image URL (Optional)', validators=[
+        Length(max=255, message="Image URL is too long.")
+    ])
+    content = TextAreaField('Article Content', validators=[
+        DataRequired(message="Article content cannot be empty.")
+    ])
+    submit = SubmitField('Publish Story')

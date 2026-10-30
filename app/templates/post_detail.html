@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }} &bull; BlogSphere{% endblock %}
+
+{% block content %}
+<article class="py-5">
+  <div class="container">
+    
+    <!-- Breadcrumb & Category Bar -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 mx-auto" style="max-width: 860px;">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}" class="text-decoration-none">Home</a></li>
+          <li class="breadcrumb-item"><span class="badge bg-primary-subtle text-primary border border-primary-subtle">{{ post.category }}</span></li>
+          <li class="breadcrumb-item active" aria-current="page">Story</li>
+        </ol>
+      </nav>
+
+      <div class="d-flex align-items-center gap-2 text-secondary small">
+        <span><i class="bi bi-clock me-1"></i> {{ post.read_time() }}</span>
+        <span>&bull;</span>
+        <span><i class="bi bi-calendar3 me-1"></i> {{ post.date }}</span>
+      </div>
+    </div>
+
+    <!-- Article Header -->
+    <header class="mx-auto mb-4" style="max-width: 860px;">
+      <h1 class="display-5 fw-bold text-dark mb-4 lh-sm">
+        {{ post.title }}
+      </h1>
+
+      <!-- Author Card & Action Bar -->
+      <div class="p-3 bg-white rounded-4 border shadow-sm d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div class="d-flex align-items-center gap-3">
+          <img src="{{ post.avatar }}" alt="{{ post.author_name }}" class="rounded-circle shadow-sm" style="width: 52px; height: 52px; object-fit: cover;">
+          <div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="fw-bold text-dark fs-6">{{ post.author_name }}</span>
+              <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill small" style="font-size: 0.7rem;">
+                <i class="bi bi-patch-check-fill me-1"></i>Author
+              </span>
+            </div>
+            <div class="text-secondary small">
+              {{ post.author.bio or 'Contributing writer on modern software development and architecture.' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Author Safeguard Controls (Edit / Delete) -->
+        {% if current_user.is_authenticated and current_user == post.author %}
+          <div class="d-flex align-items-center gap-2">
+            <a href="{{ url_for('posts.edit_post', post_id=post.id) }}" class="btn btn-outline-primary btn-sm rounded-pill px-3 py-1" id="btnEditStory">
+              <i class="bi bi-pencil-square me-1"></i> Edit Story
+            </a>
+            <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 py-1" data-bs-toggle="modal" data-bs-target="#deletePostModal" id="btnDeleteStory">
+              <i class="bi bi-trash me-1"></i> Delete
+            </button>
+          </div>
+        {% endif %}
+      </div>
+    </header>
+
+    <!-- Featured Cover Image -->
+    <div class="mx-auto mb-5" style="max-width: 960px;">
+      <div class="position-relative overflow-hidden rounded-4 shadow-sm" style="max-height: 480px;">
+        <img src="{{ post.default_image() }}" alt="{{ post.title }}" class="w-100 h-100" style="object-fit: cover; max-height: 480px;">
+      </div>
+    </div>
+
+    <!-- Article Content Body -->
+    <div class="mx-auto" style="max-width: 820px;">
+      <div class="article-body-content bg-white p-4 p-md-5 rounded-4 shadow-sm border mb-5">
+        {{ post.content|safe|replace('\n', '<br>') }}
+      </div>
+
+      <!-- Article Sticky / Interactive Interaction Bar -->
+      <div class="p-3 bg-white rounded-4 border shadow-sm d-flex align-items-center justify-content-between mb-5">
+        <div class="d-flex align-items-center gap-3">
+          <button type="button" class="btn btn-light rounded-pill px-3 py-2 d-flex align-items-center gap-2" id="btnClap">
+            <i class="bi bi-heart-fill text-danger fs-5" id="heartIcon"></i>
+            <span class="fw-semibold" id="clapCount">42</span>
+          </button>
+          <span class="text-secondary small d-none d-sm-inline">Applaud this story</span>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <button type="button" class="btn btn-outline-custom btn-sm rounded-pill px-3" id="btnCopyShareLink" title="Copy Story Link">
+            <i class="bi bi-link-45deg me-1"></i> <span id="copyLinkText">Share Link</span>
+          </button>
+          <a href="https://twitter.com/intent/tweet?text={{ post.title|urlencode }}&url={{ request.url|urlencode }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-custom btn-sm rounded-circle p-2" title="Share on X / Twitter">
+            <i class="bi bi-twitter-x"></i>
+          </a>
+          <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.url|urlencode }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-custom btn-sm rounded-circle p-2" title="Share on LinkedIn">
+            <i class="bi bi-linkedin"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Author Bio Footer Box -->
+      <div class="card border-0 shadow-sm p-4 rounded-4 bg-white mb-5">
+        <div class="row align-items-center g-3">
+          <div class="col-auto">
+            <img src="{{ post.avatar }}" alt="{{ post.author_name }}" class="rounded-circle shadow-sm" style="width: 72px; height: 72px; object-fit: cover;">
+          </div>
+          <div class="col">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <h5 class="fw-bold text-dark mb-0">Written by {{ post.author_name }}</h5>
+            </div>
+            <p class="text-secondary small mb-2">
+              {{ post.author.bio or 'Passionate tech contributor sharing insights, tutorials, and practical architectures on BlogSphere.' }}
+            </p>
+            <div class="text-muted" style="font-size: 0.75rem;">
+              Member since {{ post.author.created_at.strftime('%B %Y') if post.author.created_at else '2026' }} &bull; {{ post.author.posts.count() }} articles published
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Stories Recommendations -->
+      {% if related_posts %}
+        <div class="mb-5">
+          <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+              <h3 class="h4 fw-bold text-dark mb-1">More from {{ post.category }}</h3>
+              <p class="text-secondary small mb-0">Recommended reading from the same topic</p>
+            </div>
+          </div>
+
+          <div class="row g-4">
+            {% for related in related_posts %}
+              <div class="col-md-4">
+                <div class="card card-blog h-100">
+                  <div class="card-blog-img" style="height: 140px;">
+                    <a href="{{ url_for('posts.post_detail', post_id=related.id) }}">
+                      <img src="{{ related.default_image() }}" alt="{{ related.title }}" style="height: 140px; object-fit: cover;">
+                    </a>
+                  </div>
+                  <div class="p-3 d-flex flex-column justify-content-between flex-grow-1">
+                    <div>
+                      <div class="small text-secondary mb-1">{{ related.read_time() }}</div>
+                      <h6 class="fw-bold text-dark mb-2">
+                        <a href="{{ url_for('posts.post_detail', post_id=related.id) }}" class="text-dark text-decoration-none">
+                          {{ related.title }}
+                        </a>
+                      </h6>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 pt-2 border-top">
+                      <img src="{{ related.avatar }}" alt="{{ related.author_name }}" class="author-avatar" style="width: 24px; height: 24px;">
+                      <span class="small text-dark fw-semibold">{{ related.author_name }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Back to Top / Home Navigation -->
+      <div class="text-center py-4">
+        <a href="{{ url_for('main.index') }}" class="btn btn-outline-custom rounded-pill px-4 py-2">
+          <i class="bi bi-arrow-left me-1"></i> Back to All Articles
+        </a>
+      </div>
+
+    </div>
+  </div>
+</article>
+
+<!-- Delete Confirmation Modal (Author Only) -->
+{% if current_user.is_authenticated and current_user == post.author %}
+<div class="modal fade" id="deletePostModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold text-danger" id="deleteModalLabel">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>Delete Story
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-3">
+        <p class="mb-2">Are you sure you want to permanently delete <strong>"{{ post.title }}"</strong>?</p>
+        <p class="text-secondary small mb-0">This operation cannot be recovered.</p>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-light rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+        <form action="{{ url_for('posts.delete_post', post_id=post.id) }}" method="POST">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token is defined else '' }}">
+          <button type="submit" class="btn btn-danger rounded-pill px-3">Confirm Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- Client Interactions Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Clap / Like button interaction
+  const btnClap = document.getElementById('btnClap');
+  const clapCount = document.getElementById('clapCount');
+  const heartIcon = document.getElementById('heartIcon');
+  let clapped = false;
+
+  if (btnClap && clapCount) {
+    btnClap.addEventListener('click', function() {
+      let currentVal = parseInt(clapCount.textContent, 10) || 0;
+      if (!clapped) {
+        clapCount.textContent = currentVal + 1;
+        heartIcon.classList.add('animate-pulse');
+        clapped = true;
+      } else {
+        clapCount.textContent = currentVal - 1;
+        clapped = false;
+      }
+    });
+  }
+
+  // Copy share link to clipboard
+  const btnCopyShareLink = document.getElementById('btnCopyShareLink');
+  const copyLinkText = document.getElementById('copyLinkText');
+  if (btnCopyShareLink && copyLinkText) {
+    btnCopyShareLink.addEventListener('click', function() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        copyLinkText.textContent = 'Link Copied!';
+        btnCopyShareLink.classList.remove('btn-outline-custom');
+        btnCopyShareLink.classList.add('btn-success');
+        setTimeout(() => {
+          copyLinkText.textContent = 'Share Link';
+          btnCopyShareLink.classList.remove('btn-success');
+          btnCopyShareLink.classList.add('btn-outline-custom');
+        }, 2500);
+      }).catch(err => {
+        console.error('Failed to copy link', err);
+      });
+    });
+  }
+});
+</script>
+{% endblock %}
