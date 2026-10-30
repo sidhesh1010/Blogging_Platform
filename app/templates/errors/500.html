@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Server Error &bull; BlogSphere (500){% endblock %}
+
+{% block content %}
+<section class="py-5 text-center my-auto">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-8">
+        <div class="display-1 fw-bold text-warning mb-3">500</div>
+        <div class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-1 rounded-pill mb-3">
+          <i class="bi bi-exclamation-octagon me-1"></i> Unexpected Server Error
+        </div>
+        <h1 class="h2 fw-bold text-dark mb-3">Something Went Sideways</h1>
+        <p class="text-secondary mb-4">
+          Our servers encountered an unexpected condition. Don't worry, our engineering team has been notified.
+        </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+          <a href="{{ url_for('main.index') }}" class="btn btn-primary-gradient px-4 py-2 rounded-pill">
+            <i class="bi bi-house-door me-1"></i> Return Home
+          </a>
+          <a href="{{ url_for('main.contact') }}" class="btn btn-outline-custom px-4 py-2 rounded-pill">
+            <i class="bi bi-envelope me-1"></i> Report an Issue
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

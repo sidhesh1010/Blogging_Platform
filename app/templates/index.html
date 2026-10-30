@@ -80,19 +80,36 @@
 <!-- ================= 2. Category Filter & Featured Post ================= -->
 <section class="py-5" id="featured-feed">
   <div class="container">
-    <!-- Category Pill Filter Bar -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <!-- Category Pill & Real-time Search Filter Bar (Week 4) -->
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
       <div>
         <h2 class="h3 fw-bold mb-1">Explore by Category</h2>
-        <p class="text-secondary small mb-0">Filter and discover high-impact technical articles</p>
+        <p class="text-secondary small mb-0">Real-time search and filter across topics, authors, and insights</p>
       </div>
-      <div class="category-filter-bar">
-        {% for cat in categories %}
-          <a href="#" class="category-pill {% if loop.first %}active{% endif %}" data-category="{{ cat }}">
-            {{ cat }}
-          </a>
-        {% endfor %}
+      <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-3">
+        <!-- Live Real-Time Search Input (Week 4) -->
+        <div class="search-input-wrapper">
+          <i class="bi bi-search"></i>
+          <input type="text" class="form-control form-control-custom" id="articleSearchInput" placeholder="Search stories, topics, authors..." autocomplete="off">
+        </div>
+
+        <div class="category-filter-bar">
+          {% for cat in categories %}
+            <a href="#" class="category-pill {% if loop.first %}active{% endif %}" data-category="{{ cat }}">
+              {{ cat }}
+            </a>
+          {% endfor %}
+        </div>
       </div>
+    </div>
+
+    <!-- Empty Search Results Alert (Week 4) -->
+    <div class="card border rounded-4 text-center py-5 mb-5 bg-light d-none" id="noSearchResults">
+      <div class="mb-2 text-secondary">
+        <i class="bi bi-search fs-1 text-primary-subtle"></i>
+      </div>
+      <h5 class="fw-bold text-dark mb-1">No Matching Stories Found</h5>
+      <p class="text-secondary small mb-0">Try searching with another keyword or selecting "All" categories.</p>
     </div>
 
     <!-- Featured Post Hero Card -->

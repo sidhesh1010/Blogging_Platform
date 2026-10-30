@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Access Denied &bull; BlogSphere (403){% endblock %}
+
+{% block content %}
+<section class="py-5 text-center my-auto">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-8">
+        <div class="display-1 fw-bold text-danger mb-3">403</div>
+        <div class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-1 rounded-pill mb-3">
+          <i class="bi bi-shield-x me-1"></i> Author Privileges Required
+        </div>
+        <h1 class="h2 fw-bold text-dark mb-3">Restricted Area</h1>
+        <p class="text-secondary mb-4">
+          You do not have authorization to edit or manage this resource. Only the original verified author can make modifications.
+        </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+          <a href="{{ url_for('main.index') }}" class="btn btn-primary-gradient px-4 py-2 rounded-pill">
+            <i class="bi bi-house-door me-1"></i> Back to Safety
+          </a>
+          <a href="{{ url_for('auth.profile') }}" class="btn btn-outline-custom px-4 py-2 rounded-pill">
+            <i class="bi bi-person-circle me-1"></i> View Your Profile
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

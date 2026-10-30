@@ -137,3 +137,22 @@ def contact():
             return redirect(url_for('main.contact'))
 
     return render_template('contact.html')
+
+# =========================================================================
+# Custom Application Error Handlers (Week 4 UX Polish)
+# =========================================================================
+@main.app_errorhandler(404)
+def not_found_error(error):
+    """Render custom 404 Page Not Found error view."""
+    return render_template('errors/404.html'), 404
+
+@main.app_errorhandler(403)
+def forbidden_error(error):
+    """Render custom 403 Forbidden Access error view."""
+    return render_template('errors/403.html'), 403
+
+@main.app_errorhandler(500)
+def internal_error(error):
+    """Render custom 500 Internal Server error view and rollback session."""
+    db.session.rollback()
+    return render_template('errors/500.html'), 500
