@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact BlogSphere - Get in Touch{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="py-5 bg-white border-bottom">
+  <div class="container text-center">
+    <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1 fw-semibold mb-2">Connect With Us</span>
+    <h1 class="display-5 fw-bold mb-3">Get in Touch with BlogSphere</h1>
+    <p class="lead text-secondary mx-auto" style="max-width: 620px;">
+      Have a question, feedback on our architecture, or ideas for collaboration? Send us a message and our team will get back to you.
+    </p>
+  </div>
+</section>
+
+<!-- Contact Form and Info Section -->
+<section class="py-5">
+  <div class="container">
+    <div class="row g-5">
+      <!-- Contact Form -->
+      <div class="col-lg-7">
+        <div class="card-contact">
+          <h2 class="h4 fw-bold text-dark mb-2">Send an Inquiry</h2>
+          <p class="text-secondary small mb-4">
+            Submissions are stored directly in our SQLite database via Flask-SQLAlchemy to test data persistence.
+          </p>
+
+          <form action="{{ url_for('main.contact') }}" method="POST" id="contactForm">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="contactName" class="form-label fw-semibold small text-dark">Your Name <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-secondary"><i class="bi bi-person"></i></span>
+                  <input type="text" class="form-control form-control-custom border-start-0" id="contactName" name="name" placeholder="e.g. Sidhesh" required>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="contactEmail" class="form-label fw-semibold small text-dark">Email Address <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-secondary"><i class="bi bi-envelope"></i></span>
+                  <input type="email" class="form-control form-control-custom border-start-0" id="contactEmail" name="email" placeholder="name@example.com" required>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <label for="contactSubject" class="form-label fw-semibold small text-dark">Subject <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-secondary"><i class="bi bi-chat-left-text"></i></span>
+                  <input type="text" class="form-control form-control-custom border-start-0" id="contactSubject" name="subject" placeholder="Inquiry about BlogSphere Week 1" required>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <label for="contactMessage" class="form-label fw-semibold small text-dark">Your Message <span class="text-danger">*</span></label>
+                <textarea class="form-control form-control-custom" id="contactMessage" name="message" rows="5" placeholder="Write your message or inquiry here..." required></textarea>
+              </div>
+
+              <div class="col-12 pt-2">
+                <button type="submit" class="btn btn-primary-gradient px-4 py-2 w-100 d-flex align-items-center justify-content-center gap-2">
+                  <i class="bi bi-send-fill"></i> <span>Send Message</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Info Sidebar -->
+      <div class="col-lg-5">
+        <div class="d-flex flex-column gap-4">
+          <!-- Project Info Card -->
+          <div class="p-4 rounded-4 bg-white border shadow-sm">
+            <h5 class="fw-bold mb-3"><i class="bi bi-info-circle-fill text-primary me-2"></i>Internship Project Details</h5>
+            <p class="text-secondary small mb-3">
+              This platform is actively developed in accordance with the 8-Week Flask Internship curriculum.
+            </p>
+            <ul class="list-unstyled mb-0 d-flex flex-column gap-2 small">
+              <li class="d-flex align-items-center gap-2 text-secondary">
+                <i class="bi bi-person-badge text-primary"></i>
+                <span><strong>Developer:</strong> Sidhesh</span>
+              </li>
+              <li class="d-flex align-items-center gap-2 text-secondary">
+                <i class="bi bi-calendar-check text-primary"></i>
+                <span><strong>Current Status:</strong> Week 1 Completed</span>
+              </li>
+              <li class="d-flex align-items-center gap-2 text-secondary">
+                <i class="bi bi-git text-primary"></i>
+                <span><strong>Branch:</strong> main</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- GitHub Repository Card -->
+          <div class="p-4 rounded-4 text-white" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <i class="bi bi-github fs-4 text-primary-light"></i>
+              <h5 class="fw-bold mb-0 text-white">GitHub Repository</h5>
+            </div>
+            <p class="small text-white-50 mb-3">
+              Track commit history, branch progression, and weekly releases directly on GitHub.
+            </p>
+            <a href="https://github.com/sidhesh1010/Blogging_Platform" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light btn-sm rounded-pill d-inline-flex align-items-center gap-2">
+              <span>View Repository</span> <i class="bi bi-box-arrow-up-right"></i>
+            </a>
+          </div>
+
+          <!-- FAQ Summary -->
+          <div class="p-4 rounded-4 bg-white border shadow-sm">
+            <h6 class="fw-bold mb-2"><i class="bi bi-question-circle text-primary me-2"></i>What happens after submitting?</h6>
+            <p class="text-secondary small mb-0">
+              When you submit the contact form, Flask handles the POST request, validates the fields, commits the record into the local SQLite database using SQLAlchemy, and displays a user-friendly flash notification.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

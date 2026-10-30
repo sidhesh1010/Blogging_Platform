@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+
+{% block title %}BlogSphere - Where Knowledge Meets Storytelling{% endblock %}
+
+{% block content %}
+<!-- ================= 1. Hero Section ================= -->
+<section class="hero-wrapper">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <div class="badge-tag-hero">
+          <i class="bi bi-stars"></i> Modern Publishing Platform &bull; Week 1 Milestone
+        </div>
+        <h1 class="hero-heading">
+          Where Ideas Connect &amp; <span class="hero-highlight">Stories Resonate</span>
+        </h1>
+        <p class="hero-subtitle">
+          Welcome to <strong>BlogSphere</strong>, an open publishing platform engineered for developers, designers, and innovators to share knowledge, explore deep technical insights, and build a vibrant community.
+        </p>
+        
+        <div class="d-flex flex-wrap gap-3 align-items-center mb-4">
+          <a href="#featured-feed" class="btn btn-primary-gradient d-inline-flex align-items-center gap-2">
+            <span>Explore Articles</span> <i class="bi bi-arrow-down-short fs-5"></i>
+          </a>
+          <a href="{{ url_for('main.about') }}" class="btn btn-outline-custom d-inline-flex align-items-center gap-2">
+            <i class="bi bi-compass"></i> <span>About BlogSphere</span>
+          </a>
+        </div>
+
+        <!-- Live Quick Stats -->
+        <div class="row g-3 pt-2">
+          <div class="col-4">
+            <div class="border-start ps-3 border-2 border-primary">
+              <div class="fs-4 fw-bold text-dark">50+</div>
+              <div class="small text-secondary">Curated Topics</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="border-start ps-3 border-2 border-primary">
+              <div class="fs-4 fw-bold text-dark">100%</div>
+              <div class="small text-secondary">Python &amp; Flask</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="border-start ps-3 border-2 border-primary">
+              <div class="fs-4 fw-bold text-dark">8 Wks</div>
+              <div class="small text-secondary">Internship Scope</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual Card -->
+      <div class="col-lg-5">
+        <div class="p-3 bg-white rounded-4 shadow-lg border border-light-subtle position-relative">
+          <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&auto=format&fit=crop&q=80" alt="BlogSphere Reading Experience" class="img-fluid rounded-3 mb-3 shadow-sm w-100" style="height: 250px; object-fit: cover;">
+          <div class="p-2">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="badge bg-primary-subtle text-primary fw-semibold rounded-pill px-3 py-1">Featured Spotlight</span>
+              <span class="text-secondary small"><i class="bi bi-clock me-1"></i> 5 min read</span>
+            </div>
+            <h5 class="fw-bold text-dark mb-1">Architecture of a Modern Flask Application</h5>
+            <p class="text-secondary small mb-3">
+              Explore how blueprints, factory patterns, and SQLAlchemy unite to deliver blazing-fast web performance.
+            </p>
+            <div class="d-flex align-items-center gap-2 pt-2 border-top">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80" alt="Author" class="author-avatar">
+              <div>
+                <div class="fw-semibold text-dark small">Sidhesh</div>
+                <div class="text-muted" style="font-size: 0.75rem;">Lead Developer &bull; BlogSphere</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 2. Category Filter & Featured Post ================= -->
+<section class="py-5" id="featured-feed">
+  <div class="container">
+    <!-- Category Pill Filter Bar -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+      <div>
+        <h2 class="h3 fw-bold mb-1">Explore by Category</h2>
+        <p class="text-secondary small mb-0">Filter and discover high-impact technical articles</p>
+      </div>
+      <div class="category-filter-bar">
+        {% for cat in categories %}
+          <a href="#" class="category-pill {% if loop.first %}active{% endif %}" data-category="{{ cat }}">
+            {{ cat }}
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Featured Post Hero Card -->
+    {% if featured_post %}
+    <div class="card card-featured mb-5 blog-card-item" data-category="{{ featured_post.category }}">
+      <div class="row g-0">
+        <div class="col-lg-6">
+          <div class="featured-img-wrap">
+            <img src="{{ featured_post.image }}" alt="{{ featured_post.title }}">
+            <span class="badge-category">{{ featured_post.category }}</span>
+          </div>
+        </div>
+        <div class="col-lg-6 d-flex flex-column justify-content-between p-4 p-md-5">
+          <div>
+            <div class="d-flex align-items-center gap-2 text-secondary small mb-3">
+              <span><i class="bi bi-calendar3 me-1"></i> {{ featured_post.date }}</span>
+              <span>&bull;</span>
+              <span><i class="bi bi-clock me-1"></i> {{ featured_post.read_time }}</span>
+              <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill px-2 py-0 ms-2">Featured</span>
+            </div>
+            <h2 class="h3 fw-bold text-dark mb-3">
+              {{ featured_post.title }}
+            </h2>
+            <p class="text-secondary mb-4">
+              {{ featured_post.summary }}
+            </p>
+          </div>
+          
+          <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+            <div class="d-flex align-items-center gap-2">
+              <img src="{{ featured_post.avatar }}" alt="{{ featured_post.author }}" class="author-avatar">
+              <div>
+                <div class="fw-semibold text-dark small">{{ featured_post.author }}</div>
+                <div class="text-muted" style="font-size: 0.75rem;">{{ featured_post.author_role }}</div>
+              </div>
+            </div>
+            <button class="btn btn-outline-custom btn-sm" data-bs-toggle="modal" data-bs-target="#authPreviewModal">
+              Read Story <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Recent Posts Grid -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <div>
+        <h2 class="h3 fw-bold mb-1">Recent Articles</h2>
+        <p class="text-secondary small mb-0">Stay updated with the latest community publications</p>
+      </div>
+      <span class="text-muted small">Showing {{ recent_posts|length + 1 }} articles</span>
+    </div>
+
+    <div class="row g-4" id="postsGrid">
+      {% for post in recent_posts %}
+      <div class="col-lg-4 col-md-6 blog-card-item" data-category="{{ post.category }}">
+        <div class="card card-blog">
+          <div class="card-blog-img">
+            <img src="{{ post.image }}" alt="{{ post.title }}">
+            <span class="badge-category">{{ post.category }}</span>
+          </div>
+          <div class="p-4 d-flex flex-column flex-grow-1 justify-content-between">
+            <div>
+              <div class="d-flex align-items-center gap-2 text-secondary small mb-2">
+                <span><i class="bi bi-calendar3 me-1"></i> {{ post.date }}</span>
+                <span>&bull;</span>
+                <span><i class="bi bi-clock me-1"></i> {{ post.read_time }}</span>
+              </div>
+              <h3 class="h5 fw-bold text-dark mb-2">
+                {{ post.title }}
+              </h3>
+              <p class="text-secondary small mb-3">
+                {{ post.summary }}
+              </p>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+              <div class="d-flex align-items-center gap-2">
+                <img src="{{ post.avatar }}" alt="{{ post.author }}" class="author-avatar">
+                <div>
+                  <div class="fw-semibold text-dark small">{{ post.author }}</div>
+                  <div class="text-muted" style="font-size: 0.72rem;">{{ post.author_role }}</div>
+                </div>
+              </div>
+              <button class="btn btn-link text-primary p-0 text-decoration-none fw-semibold small" data-bs-toggle="modal" data-bs-target="#authPreviewModal">
+                Read <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ================= 3. Platform Value Section ================= -->
+<section class="py-5 bg-white border-top border-bottom">
+  <div class="container">
+    <div class="text-center max-w-2xl mx-auto mb-5">
+      <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1 fw-semibold mb-2">Architecture &amp; Features</span>
+      <h2 class="h2 fw-bold">Engineered for Writers &amp; Developers</h2>
+      <p class="text-secondary">Explore why BlogSphere provides an exceptional publishing and reading experience.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="p-4 rounded-4 border bg-light h-100">
+          <div class="brand-icon-box mb-3">
+            <i class="bi bi-pencil-square"></i>
+          </div>
+          <h3 class="h5 fw-bold text-dark">Rich Text &amp; Markdown</h3>
+          <p class="text-secondary small mb-0">
+            Compose clean, beautiful blogs with rich formatting, code blocks, and media support via integrated editors like TinyMCE/CKEditor.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="p-4 rounded-4 border bg-light h-100">
+          <div class="brand-icon-box mb-3" style="background: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%);">
+            <i class="bi bi-database-check"></i>
+          </div>
+          <h3 class="h5 fw-bold text-dark">Robust SQLAlchemy ORM</h3>
+          <p class="text-secondary small mb-0">
+            Backed by SQLite for local development and designed for zero-downtime migration to PostgreSQL in production environments.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="p-4 rounded-4 border bg-light h-100">
+          <div class="brand-icon-box mb-3" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <h3 class="h5 fw-bold text-dark">Enterprise Security</h3>
+          <p class="text-secondary small mb-0">
+            Equipped with Werkzeug password hashing, CSRF token validation, session management, and role-based permissions.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 4. Call to Action Banner ================= -->
+<section class="py-5">
+  <div class="container">
+    <div class="p-5 rounded-4 shadow-sm text-center text-white position-relative overflow-hidden" style="background: linear-gradient(135deg, #0f172a 0%, #312e81 50%, #4f46e5 100%);">
+      <div class="position-relative z-1 max-w-xl mx-auto">
+        <h2 class="display-6 fw-bold mb-3">Ready to Build &amp; Publish with BlogSphere?</h2>
+        <p class="lead text-white-50 mb-4 fs-6">
+          Week 1 sets the solid foundation. Join us as we build out authentication, CRUD features, comments, and full-text search over 8 exciting weeks.
+        </p>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+          <a href="{{ url_for('main.about') }}" class="btn btn-light rounded-pill px-4 py-2 fw-semibold">
+            Learn More in About
+          </a>
+          <a href="{{ url_for('main.contact') }}" class="btn btn-outline-light rounded-pill px-4 py-2 fw-semibold">
+            Contact Project Author
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

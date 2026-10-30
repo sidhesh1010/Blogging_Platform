@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% block title %}About BlogSphere - 8-Week Internship Project{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="py-5 bg-white border-bottom">
+  <div class="container text-center">
+    <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1 fw-semibold mb-2">Project Overview</span>
+    <h1 class="display-5 fw-bold mb-3">About BlogSphere</h1>
+    <p class="lead text-secondary mx-auto" style="max-width: 680px;">
+      BlogSphere is a full-stack, enterprise-grade blogging platform developed as part of an intensive 8-week technical internship program.
+    </p>
+  </div>
+</section>
+
+<!-- Mission & Vision -->
+<section class="py-5">
+  <div class="container">
+    <div class="row g-5 align-items-center mb-5">
+      <div class="col-lg-6">
+        <h2 class="h3 fw-bold mb-3">Our Objective &amp; Philosophy</h2>
+        <p class="text-secondary">
+          Writing and knowledge-sharing should be effortless, fast, and accessible. BlogSphere is designed to bridge the gap between technical documentation and expressive narrative writing.
+        </p>
+        <p class="text-secondary">
+          Rather than relying on heavy bloated frameworks, BlogSphere demonstrates the raw elegance and power of the <strong>Python Flask</strong> ecosystem paired with clean modular software architecture.
+        </p>
+        <div class="row g-3 pt-2">
+          <div class="col-sm-6">
+            <div class="d-flex align-items-start gap-2">
+              <i class="bi bi-shield-check text-primary fs-4"></i>
+              <div>
+                <h6 class="fw-bold mb-1">Secure by Default</h6>
+                <p class="text-secondary small mb-0">Password hashing, CSRF protection, and session security.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="d-flex align-items-start gap-2">
+              <i class="bi bi-speedometer2 text-primary fs-4"></i>
+              <div>
+                <h6 class="fw-bold mb-1">Blazing Performance</h6>
+                <p class="text-secondary small mb-0">Optimized SQLite queries and clean CSS rendering.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="p-4 rounded-4 bg-white border shadow-sm">
+          <h5 class="fw-bold mb-3"><i class="bi bi-cpu text-primary me-2"></i>Technology Stack</h5>
+          <div class="table-responsive">
+            <table class="table table-borderless align-middle mb-0">
+              <tbody>
+                <tr class="border-bottom">
+                  <td class="fw-semibold text-secondary py-2" style="width: 130px;">Backend</td>
+                  <td class="text-dark">Python 3.12, Flask 3.0, Werkzeug</td>
+                </tr>
+                <tr class="border-bottom">
+                  <td class="fw-semibold text-secondary py-2">ORM &amp; Database</td>
+                  <td class="text-dark">Flask-SQLAlchemy, SQLite (Dev), PostgreSQL (Prod ready)</td>
+                </tr>
+                <tr class="border-bottom">
+                  <td class="fw-semibold text-secondary py-2">Auth &amp; Forms</td>
+                  <td class="text-dark">Flask-Login, Flask-WTF, WTForms, email-validator</td>
+                </tr>
+                <tr class="border-bottom">
+                  <td class="fw-semibold text-secondary py-2">Frontend</td>
+                  <td class="text-dark">HTML5, Jinja2 Templates, Bootstrap 5.3, Custom CSS</td>
+                </tr>
+                <tr>
+                  <td class="fw-semibold text-secondary py-2">Repository</td>
+                  <td>
+                    <a href="https://github.com/sidhesh1010/Blogging_Platform" target="_blank" class="text-primary text-decoration-none fw-semibold">
+                      <i class="bi bi-github me-1"></i> sidhesh1010/Blogging_Platform
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8-Week Roadmap Section -->
+    <div id="roadmap" class="pt-4">
+      <div class="text-center max-w-xl mx-auto mb-5">
+        <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1 fw-semibold mb-2">Milestones</span>
+        <h2 class="display-6 fw-bold">8-Week Internship Development Roadmap</h2>
+        <p class="text-secondary">A methodical, industry-aligned roadmap executed week-by-week without skipping stages.</p>
+      </div>
+
+      <div class="row g-4">
+        <!-- Week 1 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="roadmap-card border-primary">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="badge bg-primary text-white roadmap-badge">Week 1</span>
+              <span class="badge bg-success-subtle text-success border border-success-subtle">Completed</span>
+            </div>
+            <h5 class="fw-bold mb-2">Flask Setup &amp; Structure</h5>
+            <p class="text-secondary small mb-0">
+              Virtual environment, Application Factory pattern, SQLite &amp; SQLAlchemy setup, base templates, and static assets.
+            </p>
+          </div>
+        </div>
+
+        <!-- Week 2 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="roadmap-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="badge bg-secondary text-white roadmap-badge">Week 2</span>
+              <span class="roadmap-badge upcoming">Next Milestone</span>
+            </div>
+            <h5 class="fw-bold mb-2">User Authentication</h5>
+            <p class="text-secondary small mb-0">
+              User model, registration, login/logout with Flask-Login, Werkzeug password hashing, CSRF protection, and user profile.
+            </p>
+          </div>
+        </div>
+
+        <!-- Week 3 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="roadmap-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="badge bg-secondary text-white roadmap-badge">Week 3</span>
+              <span class="roadmap-badge upcoming">Scheduled</span>
+            </div>
+            <h5 class="fw-bold mb-2">Blog Post CRUD</h5>
+            <p class="text-secondary small mb-0">
+              BlogPost model, rich text editor integration, create, read, update, delete functionality with owner restrictions.
+            </p>
+          </div>
+        </div>
+
+        <!-- Week 4 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="roadmap-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="badge bg-secondary text-white roadmap-badge">Week 4</span>
+              <span class="roadmap-badge upcoming">Scheduled</span>
+            </div>
+            <h5 class="fw-bold mb-2">Frontend &amp; UX Polish</h5>
+            <p class="text-secondary small mb-0">
+              Medium-inspired clean layout, responsive blog cards, interactive reading interface, and mobile navigation enhancements.
+            </p>
+          </div>
+        </div>
+
+        <!-- Week 5 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="roadmap-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="badge bg-secondary text-white roadmap-badge">Week 5</span>
+              <span class="roadmap-badge upcoming">Scheduled</span>
+            </div>
+            <h5 class="fw-bold mb-2">Commenting System</h5>
+            <p class="text-secondary small mb-0">
+              Comment model with relational foreign keys, user feedback threads, comment editing, deletion, and authorization.
+            </p>
+          </div>
+        </div>
+
+        <!-- Week 6 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="roadmap-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="badge bg-secondary text-white roadmap-badge">Week 6</span>
+              <span class="roadmap-badge upcoming">Scheduled</span>
+            </div>
+            <h5 class="fw-bold mb-2">Search &amp; Filtering</h5>
+            <p class="text-secondary small mb-0">
+              Full-text search by title/content, category and tag filtering, pagination, and preserved search state.
+            </p>
+          </div>
+        </div>
+
+        <!-- Week 7 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="roadmap-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="badge bg-secondary text-white roadmap-badge">Week 7</span>
+              <span class="roadmap-badge upcoming">Scheduled</span>
+            </div>
+            <h5 class="fw-bold mb-2">Testing &amp; Deployment</h5>
+            <p class="text-secondary small mb-0">
+              Automated tests with pytest, environment configuration, production database migration, and deployment guide.
+            </p>
+          </div>
+        </div>
+
+        <!-- Week 8 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="roadmap-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="badge bg-secondary text-white roadmap-badge">Week 8</span>
+              <span class="roadmap-badge upcoming">Final Milestone</span>
+            </div>
+            <h5 class="fw-bold mb-2">Internship Showcase</h5>
+            <p class="text-secondary small mb-0">
+              5-7 minute demonstration video, architecture walkthrough, documentation, learning outcomes, and final submission.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
